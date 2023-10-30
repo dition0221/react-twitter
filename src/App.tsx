@@ -1,12 +1,15 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
+import { useEffect, useState } from "react";
 // Routes
 import Layout from "./components/Layout";
 import Home from "./routes/Home";
 import Profile from "./routes/Profile";
 import Login from "./routes/Login";
 import CreateAccount from "./routes/CreateAccount";
+// Components
+import LoadingScreen from "./components/LoadingScreen";
 
 /* Router */
 const router = createBrowserRouter([
@@ -48,10 +51,20 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 export default function App() {
+  // Loading screen while checking firebase authentication
+  const [isLoading, setIsLoading] = useState(true);
+  const init = async () => {
+    // Wait for Firebase
+    setIsLoading(false);
+  };
+  useEffect(() => {
+    init();
+  }, []);
+
   return (
     <>
-      <RouterProvider router={router} />
       <GlobalStyles />
+      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
     </>
   );
 }
