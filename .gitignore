@@ -2,7 +2,6 @@
 /필기 요약지
 /.vscode
 .env
-firebase.ts
 
 # Logs
 logs
