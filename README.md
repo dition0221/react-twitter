@@ -64,6 +64,8 @@
          - Firebase를 나의 API key로 초기화하기 위함
          - 공유해도 100% 안전
 - **23-11-01 : #3.0 ~ #3.4 / Authentication**
+    <!-- * 회원가입 시 이메일 인증 기능 구현 완료 -->
+    <!-- TODO : 'sendPasswordResetEmail()'로 비밀번호 변경 이메일 발송 기능 추가하기 -->
 
 ---
 

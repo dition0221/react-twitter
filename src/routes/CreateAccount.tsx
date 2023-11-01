@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
@@ -12,6 +16,8 @@ import {
   Title,
   Wrapper,
 } from "../components/auth-components";
+// Components
+import GithubBtn from "../components/GithubBtn";
 
 export default function CreateAccount() {
   // TODO: 추후에 'React-Hook-Form' 패키지 사용하기
@@ -41,9 +47,11 @@ export default function CreateAccount() {
         email,
         password
       );
+      await sendEmailVerification(credentials.user);
       // Set the name of the user
       await updateProfile(credentials.user, { displayName: name });
-      // Redirect to the home page
+      // Log out & Redirect to the home page
+      auth.signOut();
       navigate("/");
     } catch (e) {
       if (e instanceof FirebaseError) setError(e.message);
@@ -70,6 +78,7 @@ export default function CreateAccount() {
           value={email}
           placeholder="E-Mail"
           type="email"
+          autoComplete="username"
           required
         />
         <Input
@@ -78,6 +87,7 @@ export default function CreateAccount() {
           value={password}
           placeholder="Password"
           type="password"
+          autoComplete="new-password"
           required
         />
         <Input
@@ -90,6 +100,7 @@ export default function CreateAccount() {
         Already have an account?&nbsp;
         <Link to="/login">Log In &rarr;</Link>
       </Switcher>
+      <GithubBtn />
     </Wrapper>
   );
 }

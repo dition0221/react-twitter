@@ -12,6 +12,8 @@ import {
   Title,
   Wrapper,
 } from "../components/auth-components";
+// Components
+import GithubBtn from "../components/GithubBtn";
 
 export default function CreateAccount() {
   // TODO: 추후에 'React-Hook-Form' 패키지 사용하기
@@ -33,8 +35,10 @@ export default function CreateAccount() {
     if (isLoading || email === "" || password === "") return;
     try {
       setIsLoading(true);
+      console.log(auth.currentUser?.emailVerified);
       // Log-In
       await signInWithEmailAndPassword(auth, email, password);
+      if (!auth.currentUser?.emailVerified) throw setError("Not verified.");
       // Redirect to the home page
       navigate("/");
     } catch (e) {
@@ -54,6 +58,7 @@ export default function CreateAccount() {
           value={email}
           placeholder="E-Mail"
           type="email"
+          autoComplete="username"
           required
         />
         <Input
@@ -62,6 +67,7 @@ export default function CreateAccount() {
           value={password}
           placeholder="Password"
           type="password"
+          autoComplete="current-password"
           required
         />
         <Input type="submit" value={isLoading ? "Loading.." : "Log In"} />
@@ -71,6 +77,7 @@ export default function CreateAccount() {
         Don't have an account?&nbsp;
         <Link to="/create-account">Create One &rarr;</Link>
       </Switcher>
+      <GithubBtn />
     </Wrapper>
   );
 }
