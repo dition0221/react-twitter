@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import { useState } from "react";
+import { addDoc, collection, updateDoc } from "firebase/firestore";
+import { auth, db, storage } from "../firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Form = styled.form`
   display: flex;
@@ -65,17 +68,49 @@ export default function PostTweetForm() {
   };
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
-    if (files && files.length === 1) setFile(files[0]);
+    // 1 file & less then 1MB
+    if (files && files.length === 1 && files[0].size <= 1048576)
+      return setFile(files[0]);
+    else return alert("Fail: Please attach an image file of less then 1MB.");
+  };
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const user = auth.currentUser; // Check logged-in
+    if (!user || isLoading || tweet == "" || tweet.length > 180) return;
+    //
+    try {
+      setIsLoading(true);
+      const doc = await addDoc(collection(db, "tweets"), {
+        tweet,
+        createAt: Date.now(),
+        username: user.displayName || "Anonymous",
+        userId: user.uid,
+      });
+      if (file) {
+        const locationRef = ref(storage, `tweets/${user.uid}/${doc.id}`);
+        const result = await uploadBytes(locationRef, file);
+        const url = await getDownloadURL(result.ref);
+        await updateDoc(doc, { photo: url });
+      }
+      // reset
+      setTweet("");
+      setFile(null);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <Form>
+    <Form onSubmit={onSubmit}>
       <TextArea
         rows={5}
         maxLength={180}
         onChange={onChange}
         value={tweet}
         placeholder="What is happening?"
+        required
       />
       <AttachFileBtn htmlFor="file">
         {file ? "Photo Added ✅" : "Add Photo"}
