@@ -14,6 +14,7 @@ import {
 } from "../components/auth-components";
 // Components
 import GithubBtn from "../components/GithubBtn";
+import FindPw from "../components/FindPw";
 
 export default function CreateAccount() {
   // TODO: 추후에 'React-Hook-Form' 패키지 사용하기
@@ -77,6 +78,7 @@ export default function CreateAccount() {
         Don't have an account?&nbsp;
         <Link to="/create-account">Create One &rarr;</Link>
       </Switcher>
+      <FindPw />
       <GithubBtn />
     </Wrapper>
   );

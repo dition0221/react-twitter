@@ -17,6 +17,10 @@ const Button = styled.button`
   align-items: center;
   gap: 5px;
   cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+  &:hover {
+    opacity: 0.8;
+  }
   svg {
     height: 25px;
   }

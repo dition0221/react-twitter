@@ -64,8 +64,79 @@
          - Firebase를 나의 API key로 초기화하기 위함
          - 공유해도 100% 안전
 - **23-11-01 : #3.0 ~ #3.4 / Authentication**
-    <!-- * 회원가입 시 이메일 인증 기능 구현 완료 -->
-    <!-- TODO : 'sendPasswordResetEmail()'로 비밀번호 변경 이메일 발송 기능 추가하기 -->
+  - Firebase Authentication 초기 설정
+    - Firebase는 너무 크기 때문에, 프로젝트 시작 시 필요한 제품을 직접 선택해야 함
+      - Firebase 콘솔에서 활성화한 후, 코드에서 초기화
+    - 설정법
+      1. [콘솔] Firebase Authentication에 접속해 설정 시작하기
+      2. [콘솔] 로그인 매체 설정하기
+      3. [코드] 'src/firebase.ts'에서 Authentication 사용 설정하기
+         > import { getAuth } from "firebase/auth";
+         > export const auth = getAuth(앱이름);
+         - 인증 서비스에 대한 직접 링크를 받아올 수 있음
+      4. [코드] Authentication 사용하기
+         - 'getAuth()'로 만든 auth객체의 프로퍼티, 메서드를 사용
+           - 인증인스턴스.authStateReady() - Firebase Authentication이 초기화되고, 사용자 인증 상태가 결정될 떄까지 대기
+  - 계정 생성 (이메일)
+    1. 예외인 경우 제외하기
+       - 로딩 중 이거나 form에 제대로 기입하지 않은 경우, 예외 처리
+    2. Firebase에 계정 생성하기
+       - 'createUserWithEmailAndPassword(인증인스턴스, 이메일, 비밀번호)' 사용
+         - 사용자 자격증명(UserCredential)&lt;Promise&gt;을 반환함
+         - 사용자 계정을 생성하려고 시도함
+         - 성공 시 사용자는 App에 즉시 로그인 됨
+         - 실패(계정이 이미 존재, PW가 유효하지 않는 등)할 수도 있음
+           - Firebase가 알아서 PW 유효성 검사를 함
+       - '자격증명변수.user'를 통해 사용자 정보를 얻을 수 있음
+    3. 사용자의 이름(닉네임) 부여하기
+       - Firebase의 사용자는 이름과 아바타 이미지의 URL을 가지는 미니 프로필을 가지게 됨
+         - 계정 생성 후, 사용자의 이름을 설정할 수 있음 (옵션)
+       - 기본형 : await updateProfile(사용자, { displayName?: 이름, photoURL?: 이미지URL });
+    4. 홈페이지로 Re-Direct하기
+  - 로그인한 사용자만 볼 수 있는 페이지 생성
+    1. 사용자가 로그인을 하였는지 판별하기
+       - '인증인스턴스.currentUser' 프로퍼티는 사용자의 값(User) | null을 반환
+    2. 로그인한 사용자만 볼 수 있는 Route 생성하기
+  - 로그아웃
+    - 기본형 : '인증인스턴스.signOut();'
+  - 계정 생성 시 error 메시지 보여주기
+    - 이미 존재하는 이메일이나 PW가 약하다는 등의 이유때문에 error가 발생할 수 있음
+    - 'try-catch'문을 사용해 Firebase의 error문을 확인 가능
+    - Firebase의 error 메시지를 보여줄 수도 있음
+      > if (e instanceof FirebaseError) {
+      > &nbsp;&nbsp;console.log(e.code, e.message)
+      > }
+  - 로그인
+    - 사용자가 로그인 form을 제출할 때(onSubmit에서) 로그인을 실행
+    - 기본형 : await signInWithAndPassword(인증인스턴스, 이메일, 비밀번호);
+  - 소셜 로그인(GitHub)
+    1. [콘솔] 'Authentication'-'Sign-in method'-'새 제공업체 추가'에서 사용 설정하기
+    2. GitHub App 생성하기
+       - GitHub에서 'Settings'-'Developer settings'-'OAuth Apps' 접속
+         - 또는 [ https://github.com/settings/developers ] 접속
+       - 새로운 OAuth App 생성
+         - 'Homepage URL'은 확인하는 것이 아니라서, 아무거나 넣어도 됨
+         - 'Authorization callback URL'은 Firebase애서 나오는 URL을 사용
+    3. [콘솔] 소셜로그인 설정 완성하기
+       - 클라이언트 ID는 GitHub에서 만들어진 client ID를 사용
+       - 클라이언트 PW는 GitHub에서 만드는 Client secret을 사용
+    4. [코드] 소셜 로그인 기능 생성하기
+       - 소셜 로그인 버튼을 클릭 시 작동하도록 함
+       - 기본형
+         > const 제공자변수 = new GithubAuthProvider();
+         > await signWithPopup(인증인스턴스, 제공자변수); // 옵션 1
+         > await signWithRedirect(인증인스턴스, 제공자변수); // 옵션 2
+       - 문제 발생 : 로그인 방식은 다르지만, 이메일주소가 같을 경우 error 발생
+  - 비밀번호 재설정하는 이메일 전송
+    - 기본형 : await sendPasswordResetEmail()
+  - 회원가입 시 이메일 인증 기능
+    1. 계정 생성 시 인증 이메일 발송하기
+       - await sendEmailVerification(사용자정보);
+    2. 로그인 시 인증확인 후 로그인하도록 하기
+       - 로그인 후 '인증인스턴스.emailVerified' 프로퍼티로 인증되었는지 확인
+  - Update : 회원가입 시 이메일 인증 기능 구현 완료
+- **23-11-04 : #4.0 ~ #4.7 / Tweeting**
+  - Update : 'sendPasswordResetEmail()'로 비밀번호 변경 이메일 발송 기능 추가하기
 
 ---
 
