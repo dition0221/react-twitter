@@ -36,10 +36,10 @@ export default function CreateAccount() {
     if (isLoading || email === "" || password === "") return;
     try {
       setIsLoading(true);
-      console.log(auth.currentUser?.emailVerified);
       // Log-In
       await signInWithEmailAndPassword(auth, email, password);
-      if (!auth.currentUser?.emailVerified) throw setError("Not verified.");
+      if (!auth.currentUser?.emailVerified)
+        throw setError("Not e-mail verified.");
       // Redirect to the home page
       navigate("/");
     } catch (e) {

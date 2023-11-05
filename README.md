@@ -71,7 +71,7 @@
       1. [콘솔] Firebase Authentication에 접속해 설정 시작하기
       2. [콘솔] 로그인 매체 설정하기
       3. [코드] 'src/firebase.ts'에서 Authentication 사용 설정하기
-         > import { getAuth } from "firebase/auth";
+         > import { getAuth } from "firebase/auth";  
          > export const auth = getAuth(앱이름);
          - 인증 서비스에 대한 직접 링크를 받아올 수 있음
       4. [코드] Authentication 사용하기
@@ -103,8 +103,8 @@
     - 이미 존재하는 이메일이나 PW가 약하다는 등의 이유때문에 error가 발생할 수 있음
     - 'try-catch'문을 사용해 Firebase의 error문을 확인 가능
     - Firebase의 error 메시지를 보여줄 수도 있음
-      > if (e instanceof FirebaseError) {
-      > &nbsp;&nbsp;console.log(e.code, e.message)
+      > if (e instanceof FirebaseError) {  
+      > &nbsp;&nbsp;console.log(e.code, e.message)  
       > }
   - 로그인
     - 사용자가 로그인 form을 제출할 때(onSubmit에서) 로그인을 실행
@@ -123,8 +123,8 @@
     4. [코드] 소셜 로그인 기능 생성하기
        - 소셜 로그인 버튼을 클릭 시 작동하도록 함
        - 기본형
-         > const 제공자변수 = new GithubAuthProvider();
-         > await signWithPopup(인증인스턴스, 제공자변수); // 옵션 1
+         > const 제공자변수 = new GithubAuthProvider();  
+         > await signWithPopup(인증인스턴스, 제공자변수); // 옵션 1  
          > await signWithRedirect(인증인스턴스, 제공자변수); // 옵션 2
        - 문제 발생 : 로그인 방식은 다르지만, 이메일주소가 같을 경우 error 발생
   - 비밀번호 재설정하는 이메일 전송
@@ -134,13 +134,81 @@
        - await sendEmailVerification(사용자정보);
     2. 로그인 시 인증확인 후 로그인하도록 하기
        - 로그인 후 '인증인스턴스.emailVerified' 프로퍼티로 인증되었는지 확인
-  - Update : 회원가입 시 이메일 인증 기능 구현 완료
+  - _Update : 회원가입 시 이메일 인증 기능 구현 완료_
 - **23-11-04 : #4.0 ~ #4.3 / Tweeting(1)**
-  - Update : 'sendPasswordResetEmail()'로 비밀번호 변경 이메일 발송 기능 추가하기
+  - _Update : 'sendPasswordResetEmail()'로 비밀번호 변경 이메일 발송 기능 구현 완료_
+  - Cloud Firestore
+    - Firebase의 NoSQL DB
+    - 설정법
+      1. [콘솔] DB 생성하기
+         - DB 위치를 정함 (딱 한 번만 정할 수 있음)
+         - 테스트 모드 선택 (30일만 사용 가능)
+      2. [코드] DB 인스턴스 생성하기
+         - 기본형
+           > import { getFirestore } from "firebase/firestore";  
+           > export const 변수명 = getFirestore(앱명);
+    - 콘솔에서 수동으로 DB에 데이터를 추가하는 방법
+      1. 컬렉션 생성하기
+         - 컬렉션(collection) : 폴더 같은 것
+      2. 문서(document) 생성하기
+         - 필드와 값을 입력해 생성
+         - 기본적으로 임의의 ID가 배정되지만, 원한다면 ID를 변경할 수 있음
+         - 문서 내에 또 다른 컬렉션 생성 가능
+    - 코드에서 DB에 데이터를 추가하는 방법
+      - 기본형 : await addDoc(collection(DB인스턴스, 컬렉션명), { 데이터(키-값) });
+        - ex.
+          > await addDoc(collection(db, "tweets"), {  
+          > &nbsp;&nbsp;tweet,  
+          > &nbsp;&nbsp;createAt: Date.now(),  
+          > &nbsp;&nbsp;username: user.displayName || "Anonymous",  
+          > &nbsp;&nbsp;userId: user.uid,  
+          > });
+      - 추후 트윗을 삭제할 권한을 부여하기 위해, 트윗 시 사용자 id를 저장함
+        - 트윗 삭제 시 로그인 사용자 id와 트윗 id를 비교한 후, 삭제 결정
+      - DB가 거의 실시간으로 작동함
+  - Storage(Firebase)
+    - 설정법
+      1. [콘솔] '빌드'-'Storage'에서 스토리지 생성하기
+         - 테스트 모드 선택
+      2. [코드] storage 인스턴스 생성하기
+         - 기본형
+           > import { getStorage } from "firebase/storage";  
+           > export const 변수명 = getStorage(앱명);
+    - 스토리지도 FireStore처럼 컬렉션(폴더)과 문서로 이루어져 있음
+      - 파일이 저장되는 폴더명과 파일명을 지정 가능
+    - 사용법 (파일 업로드)
+      1. 해당 파일의 위치에 대한 reference(location) 받아오기
+         - 기본형
+           > import { ref } from "firebase/storage";  
+           > const 변수명 = ref(스토리지인스턴스, 저장경로);
+         - 이미지명은 이미지가 업로드된 트윗의 id이어야, 트윗 삭제 시 빠르게 찾기 가능
+           - 'addDoc()'은 document의 참조를 &lt;Promise&gt;로 반환함을 이용
+         - ex.
+           > const doc = await addDoc( ... );  
+           > const locationRef = ref(storage, \`tweets/\${user.uid}/\${doc.id}\`);
+      2. 스토리지에 파일 업로드하기
+         - 기본형
+           > import { uploadBytes } from "firebase/storage";  
+           > await uploadBytes(위치참조변수, 파일변수);
+         - ex. `await uploadBytes(locationRef, file);`
+      3. 스토리지의 파일 경로를 추출하기 (DB에 파일 경로를 추가하기 위함)
+         - 'uploadBytes()'는 업로드 결과에 대한 참조&lt;Promise&gt;를 반환함
+         - 기본형
+           > import { getDownloadURL } from "firebase/storage";  
+           > const 변수 = await getDownloadURL(저장결과참조변수);
+         - 결과값의 .ref 프로퍼티로 Promise&lt;string&gt;타입인 URL을 반환함
+         - ex.
+           > const result = await uploadBytes(locationRef, file);  
+           > const url = await getDownloadURL(result.ref);
+      4. DB에 파일 경로를 추가하기
+         - 'updateDoc()' 메서드를 사용해 DB document 업데이트
+         - 기본형
+           > import { updateDoc } from "firebase/firestore";  
+           > await updateDoc(문서참조변수, { 데이터(키-값) });
+         - ex. `await updateDoc(doc, { photo: url });`
+- **23-11-05 : #4.4 ~ #4.7 / Tweeting(2)**
 
 ---
-
-- **23-11-05 : #4.4 ~ #4.7 / Tweeting(2)**
 
 노마드 코더 정책 상 강의요약은 괜찮으나, 코드와 필기는 공개적인 곳에 올리면 안 됨.  
 필기 요약지는 암호화된 .zip 파일로 저장함.
