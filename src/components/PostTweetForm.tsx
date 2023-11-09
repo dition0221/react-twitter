@@ -77,7 +77,6 @@ export default function PostTweetForm() {
     e.preventDefault();
     const user = auth.currentUser; // Check logged-in
     if (!user || isLoading || tweet == "" || tweet.length > 180) return;
-    //
     try {
       setIsLoading(true);
       const doc = await addDoc(collection(db, "tweets"), {

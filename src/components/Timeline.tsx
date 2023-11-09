@@ -1,31 +1,78 @@
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import {
+  Unsubscribe,
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { db } from "../firebase";
+import Tweet from "./tweet";
 
 export interface ITweet {
+  id: string;
   createdAt: number;
-  photo: string;
+  photo?: string;
   tweet: string;
   userId: string;
   username: string;
 }
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  // overflow scroll
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari
+  }
+  scrollbar-width: none; // Firefox
+`;
 
 export default function Timeline() {
+  // Get tweets
   const [tweets, setTweets] = useState<ITweet[]>([]);
-  const fetchTweets = async () => {
-    const tweetsQuery = query(
-      collection(db, "tweets"),
-      orderBy("createdAt", "desc")
-    );
-    const snapshot = await getDocs(tweetsQuery);
-    snapshot.docs.forEach((doc) => console.log(doc.data()));
-  };
   useEffect(() => {
+    let unsubscribe: Unsubscribe | null = null;
+    const fetchTweets = async () => {
+      // Create query
+      const tweetsQuery = query(
+        collection(db, "tweets"),
+        orderBy("createdAt", "desc"),
+        limit(25)
+      );
+      /*
+      // Get document from DB
+      const snapshot = await getDocs(tweetsQuery);
+      // Save data to state
+      const tweetsArr = snapshot.docs.map((doc) => {
+        const { createdAt, photo, tweet, userId, username } = doc.data();
+        return { createdAt, photo, tweet, userId, username, id: doc.id };
+      });
+      */
+      // Real-time connection
+      unsubscribe = onSnapshot(tweetsQuery, (snapshot) => {
+        const tweetsArr = snapshot.docs.map((doc) => {
+          const { createdAt, photo, tweet, userId, username } = doc.data();
+          return { createdAt, photo, tweet, userId, username, id: doc.id };
+        });
+        setTweets(tweetsArr);
+      });
+    };
     fetchTweets();
+    return () => {
+      unsubscribe && unsubscribe();
+    };
   }, []);
 
-  return <Wrapper>{JSON.stringify(tweets)}</Wrapper>;
+  return (
+    <Wrapper>
+      {tweets.map((tweet) => (
+        <Tweet key={tweet.id} {...tweet} />
+      ))}
+    </Wrapper>
+  );
 }

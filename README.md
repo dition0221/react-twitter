@@ -206,7 +206,10 @@
            > import { updateDoc } from "firebase/firestore";  
            > await updateDoc(문서참조변수, { 데이터(키-값) });
          - ex. `await updateDoc(doc, { photo: url });`
-- **23-11-05 : #4.4 ~ #4.7 / Tweeting(2)**
+- **23-11-05 : #4.4 / Tweeting(2)**
+- **23-11-09 : #4.4 ~ #4.7 / Tweeting(3)**
+  <!-- TODO : 트윗 수정 기능 -->
+  <!-- TODO : 사진 삭제/수정 기능 -->
 
 ---
 
