@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { db } from "../firebase";
-import Tweet from "./tweet";
+import Tweet from "./Tweet";
 
 export interface ITweet {
   id: string;

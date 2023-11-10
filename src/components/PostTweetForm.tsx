@@ -32,6 +32,7 @@ const TextArea = styled.textarea`
 
 const AttachFileBtn = styled.label`
   padding: 10px 0;
+  background-color: black;
   color: #1d9bf0;
   text-align: center;
   border-radius: 20px;
@@ -39,6 +40,10 @@ const AttachFileBtn = styled.label`
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  &:hover,
+  &:active {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
 `;
 
 const AttachFileInput = styled.input`

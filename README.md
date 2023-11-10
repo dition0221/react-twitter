@@ -3,7 +3,7 @@
 ### Firebase와 Vite를 사용해 Twitter React App을 클론합니다.
 
 <img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white"/> <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=white"/> <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=white"/> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/> <img src="https://img.shields.io/badge/styled&dash;components-DB7093?style=flat-square&logo=styledcomponents&logoColor=white"/>  
-<img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white"/> <img src="https://img.shields.io/badge/React&dash;Router-CA4245?style=flat-square&logo=reactrouter&logoColor=white"/>
+<img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white"/> <img src="https://img.shields.io/badge/React&dash;Router-CA4245?style=flat-square&logo=reactrouter&logoColor=white"/> <img src="https://img.shields.io/badge/timeago.js-000?style=flat-square&logo=&logoColor=white"/>
 
 ---
 
@@ -63,7 +63,7 @@
        - SDK 코드를 복사한 후 'src/firebase.ts'를 생성한 후 붙여넣기
          - Firebase를 나의 API key로 초기화하기 위함
          - 공유해도 100% 안전
-- **23-11-01 : #3.0 ~ #3.4 / Authentication**
+- **23-11-01 : #3.0 ~ #3.4 / Authentication (+ Code Challenge)**
   - Firebase Authentication 초기 설정
     - Firebase는 너무 크기 때문에, 프로젝트 시작 시 필요한 제품을 직접 선택해야 함
       - Firebase 콘솔에서 활성화한 후, 코드에서 초기화
@@ -134,9 +134,8 @@
        - await sendEmailVerification(사용자정보);
     2. 로그인 시 인증확인 후 로그인하도록 하기
        - 로그인 후 '인증인스턴스.emailVerified' 프로퍼티로 인증되었는지 확인
-  - _Update : 회원가입 시 이메일 인증 기능 구현 완료_
-- **23-11-04 : #4.0 ~ #4.3 / Tweeting(1)**
-  - _Update : 'sendPasswordResetEmail()'로 비밀번호 변경 이메일 발송 기능 구현 완료_
+  - _Update (Code Challenge): 회원가입 시 이메일 인증 기능_
+- **23-11-04 : #4.0 ~ #4.3 / Tweeting(1) (+ Code Challenge)**
   - Cloud Firestore
     - Firebase의 NoSQL DB
     - 설정법
@@ -206,10 +205,60 @@
            > import { updateDoc } from "firebase/firestore";  
            > await updateDoc(문서참조변수, { 데이터(키-값) });
          - ex. `await updateDoc(doc, { photo: url });`
+  - _Update (Code Challenge): 'sendPasswordResetEmail()'로 비밀번호 변경 이메일 발송 기능_
 - **23-11-05 : #4.4 / Tweeting(2)**
 - **23-11-09 : #4.4 ~ #4.7 / Tweeting(3)**
-  <!-- TODO : 트윗 수정 기능 -->
-  <!-- TODO : 사진 삭제/수정 기능 -->
+  - 쿼리하는(데이터를 가져오는) 방법 - Firestore(DB)
+    1. DB로부터 가져올 데이터가 어떻게 생겼는지 TypeScript로 정의하기
+       - 'interface'로 타입을 정의
+    2. 쿼리(Query) 생성하기
+       - 어떤 데이터를 원하는지에 대한 쿼리를 생성해야 함
+       - 기본형 : `const 변수명 = query(collection(DB인스턴스, 컬렉션명), ...조건문);`
+    3. DB로부터 문서 가져오기
+       - 'getDocs(쿼리)' 메서드를 사용해 'QuerySnapshot'을 결과값으로 받음
+         - QuerySnapshot : Firestore에서 실행한 쿼리의 결과를 나타내는 객체
+       - 기본형 : `const 변수명 = await getDocs(쿼리변수);`
+       - '쿼리스냅샷' 변수의 프로퍼티들(.docs, .empty, .size 등)을 이용 가능
+         - .docs : 결과 배열을 반환하며, 반복문에서 '.data()' 메서드를 사용해 결과를 출력
+           - ex. `snapshot.docs.forEach((doc) => console.log(doc.data()));`
+    4. 가져온 문서를 상태에 저장하기
+       - 배열의 '.map()'메서드를 사용해 저장할 데이터 배열을 생성한 후, 상태에 저장
+         - id는 '문서.id'(DB에서 자동 생성됨)를 사용
+  - 실시간으로 쿼리의 변경 사항을 수신하는 방법 - Firestore(DB)
+    - DB 및 쿼리와 실시간 연결을 생성하고, 해당 쿼리에 요소가 생성/삭제/수정 시 쿼리에 알려줌
+    - 사용법
+      1. 'onSnapshot()'을 사용해 DB와 이벤트 리스너를 연결하기
+         - 특정 문서나 켈렉션, 쿼리 이벤트를 감지하여, 실시간으로 이벤트 콜백함수를 실행할 수 있음
+           - DB에 들어온 쿼리를 새로고침 없이 화면에 반영 가능
+         - 'getDocs()'를 사용해 DB로부터 문서를 가져오는 방법 대신 사용함
+         - 기본형 : `await onSnapshot(쿼리, 콜백함수);`
+           - 콜백함수에서 실시간 이벤트를 작성
+           - 콜백함수에서 각 스냅샷의 '.docChanges'는 마지막 스냅샷 이후의 변경 사항을 배열로 반환함 (변경 유형도 알 수 있음)
+      2. DB와 연결을 해제하기
+         - 사용자가 다른 화면을 사용 시 실시간을 작동하지 않게 해주는 것이 좋음
+           - 'useEffect()'의 cleanUp(return문) 기능을 이용
+           - 연결을 계속 켜놓을 시 비용이 늘어나기 때문
+         - 'onSnapshot()'은 'Unsubscribe' 함수를 반환함
+           - 기본형
+             > let 변수명: Unsubscribe | null = null;
+             > 변수명 = await onSnapshot( ... );
+             > 변수명(); // 실시간 DB 연결 해제
+  - 트윗 삭제 기능 구현
+    1. 로그인한 유저 id와 트윗의 유저 id가 일치할 경우에만, 트윗 삭제를 허가
+       - 트윗 DB에 작성자의 id를 저장하고 있음
+    2. 트윗 삭제하기 (Firestore)
+       - 기본형 : `await deleteDoc(doc(DB인스턴스, 컬렉션명, 문서id));`
+    3. 첨부했던 이미지 삭제하기 (Storage)
+       1. 스토리지에서 파일 참조하기
+          - 기본형 : `const 변수명 = ref(스토리지인스턴스, 파일경로);`
+       2. 스토리지에서 파일 삭제하기
+          - 기본형 : `await deleteObject(참조변수);`
+- **23-11-10 : #5.0 ~ #5.2 / User profile (+ Code Challenge)**
+  - _Update (Code Challenge)_
+    - _트윗의 내용 수정 기능_
+    - _트윗의 이미지 삭제/수정 기능_
+    - _트윗의 상대적인 작성시간 기능 (timeago.js)_
+    - _프로필 이름 수정 기능_
 
 ---
 
