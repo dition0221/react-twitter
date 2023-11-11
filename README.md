@@ -254,11 +254,47 @@
        2. 스토리지에서 파일 삭제하기
           - 기본형 : `await deleteObject(참조변수);`
 - **23-11-10 : #5.0 ~ #5.2 / User profile (+ Code Challenge)**
+  - 사용자 프로필 생성
+    1. 프로필 페이지 생성하기
+    2. 프로필 이미지 파일을 스토리지에 저장하는 기능 구현하기
+       - 사용자로부터 파일 받기
+       - 파일 참조변수 생성하기
+       - 스토리지에 파일 업로드하기
+       - 스토리지에 업로드한 파일의 경로 가져오기
+    3. 프로필 업데이트하기
+       - 스토리지에 업로드한 이미지 파일의 결과참조변수를 가지고 업데이트
+       - 기본형 : `await updateProfile(사용자변수, { 키-값 });`
+  - 유저 타임라인
+    - 현재 로그인한 사용자의 트윗만 가져오는 기능을 구현할 것
+    1. 쿼리 작성하기
+       - 'query()' 함수의 where 조건문을 사용해 로그인한 사용자의 트윗만 가져옴
+       - 기본형 : `where(필드명, 비교연산, 비교값)`
+    2. DB로부터 스냅샷 가져오기
+    3. 스냅샷을 state에 저장하기
+    4. 쿼리 필터 index 적용하기
+       - 쿼리 조건문 사용 시 index가 필요하다고 콘솔 에러가 발생함
+         - 콘솔의 링크에 접속하여, index를 저장하면 됨
+       - firestore에게 무엇을 필터링하는지 알려주는 작업
+         - firestore가 유연하기 때문에 필요한 작업
+  - timeago.js 패키지
+    - Internationalization 내장 API를 사용해 상대시간을 계산할 때, 시간단위를 꼭 입력해야 함
+      - 자동으로 시간단위를 사용하기 위해 timeago.js 패키지를 사용
+    - 설치법 : `npm i timeago.js`
+    - 사용법 : `format(날짜, 국가코드);`
+      - 기본값은 영어이며, 다른 언어를 사용할 시 'register()'로 등록 후 사용
+        - ex.
+          > import { format, register } from "timeago.js";
+          > import koLocale from "timeago.js/lib/lang/ko";
+          >
+          > register("ko", koLocale);
+          > const relativeTime = format(Date.now(), "ko");
+    - <a href="https://github.com/hustcc/timeago.js" target="_blank">공식 문서</a> / <a href="https://youtu.be/2AMRTAFSh98?t=373" target="_blank">참고 자료</a>
   - _Update (Code Challenge)_
     - _트윗의 내용 수정 기능_
     - _트윗의 이미지 삭제/수정 기능_
     - _트윗의 상대적인 작성시간 기능 (timeago.js)_
     - _프로필 이름 수정 기능_
+- **23-11-11 : #6.0 ~ #6.3 / Deploy**
 
 ---
 
