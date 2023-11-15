@@ -15,7 +15,7 @@ import {
   Switcher,
   Title,
   Wrapper,
-} from "../components/auth-components";
+} from "../styles/auth-components";
 // Components
 import GithubBtn from "../components/GithubBtn";
 import FindPw from "../components/FindPw";

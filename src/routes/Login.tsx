@@ -11,10 +11,11 @@ import {
   Switcher,
   Title,
   Wrapper,
-} from "../components/auth-components";
+} from "../styles/auth-components";
 // Components
 import GithubBtn from "../components/GithubBtn";
 import FindPw from "../components/FindPw";
+import GoogleBtn from "./../components/GoogleBtn";
 
 export default function CreateAccount() {
   // TODO: 추후에 'React-Hook-Form' 패키지 사용하기
@@ -80,6 +81,7 @@ export default function CreateAccount() {
       </Switcher>
       <FindPw />
       <GithubBtn />
+      <GoogleBtn />
     </Wrapper>
   );
 }

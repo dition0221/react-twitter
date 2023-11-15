@@ -3,7 +3,12 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
 import { FirebaseError } from "firebase/app";
 // CSS
-import { FindPwWrapper, Input, Overlay, PwForm } from "./auth-components";
+import {
+  FindPwWrapper,
+  Input,
+  Overlay,
+  PwForm,
+} from "../styles/auth-components";
 
 export default function FindPw() {
   const [overlay, setOverlay] = useState(false);

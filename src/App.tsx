@@ -35,11 +35,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <ProtectedRoute isUser>
+        <Login />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/create-account",
-    element: <CreateAccount />,
+    element: (
+      <ProtectedRoute isUser>
+        <CreateAccount />
+      </ProtectedRoute>
+    ),
   },
 ]);
 
@@ -50,6 +58,7 @@ const GlobalStyles = createGlobalStyle`
     box-sizing:border-box;
   }
   body {
+    padding: 0 10px;
     background-color: #222;
     color: white;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;

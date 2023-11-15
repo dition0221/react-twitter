@@ -60,6 +60,7 @@ export const FindPwWrapper = styled(Switcher)`
     color: #1d9bf0;
     border: none;
     padding: 0;
+    margin-bottom: 40px;
     text-decoration: underline;
     cursor: pointer;
   }
@@ -78,16 +79,41 @@ export const Overlay = styled.div`
 `;
 
 export const PwForm = styled(Form)`
-  width: 420px;
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   margin: auto auto;
-  padding: 20px;
   height: fit-content;
   span {
     text-align: center;
+  }
+`;
+
+/* CSS: Social login button */
+export const SocialLoginBtn = styled.button`
+  width: 100%;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: 0;
+  margin-top: 10px;
+  background-color: white;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+  &:hover {
+    opacity: 0.8;
+  }
+  svg {
+    height: 25px;
   }
 `;

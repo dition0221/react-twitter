@@ -295,8 +295,73 @@
     - _트윗의 상대적인 작성시간 기능 (timeago.js)_
     - _프로필 이름 수정 기능_
 - **23-11-11 : #6.0 ~ #6.3 / Deploy**
+  - 배포 (deploy)
+    1. [콘솔] Firebase Hosting 서비스 생성하기
+    2. [코드] Firebase CLI 설치하기
+       > npm i -g firebase-tools
+    3. [코드] firebase에 로그인하기
+       > firebase login
+    4. [코드] firebase 프로젝트 시작(초기화)하기
+       - `firebase init` 입력
+       - `Hosting: Config files...` 선택
+         - Firebase Hosting을 위한 파일구성을 만듦
+       - `Use an existing project` 옵션 선택
+         - 기존 프로젝트 사용
+       - 프로젝트 선택
+       - 'public directory' 입력
+         - 빌드한 후, 빌드 폴더를 선택해야 함 (npm run build)
+           - vite는 'dist'폴더에 빌드하므로, 'dist'를 입력
+         - SPA(Single Page Application)으로 사용할지 여부 선택
+           - SPA로 사용
+       - GitHub와 함께 자동 빌드하고 배포하도록 설정 여부
+         - No
+       - 'dist/index.html'파일이 이미 존재하는데, 덮어쓸지 여부
+         - Yes
+    5. [코드] 배포 스크립트 생성하기
+       - package.json에서 배포하는 스크립트를 생성
+         > "deploy": "firebase deploy"
+       - 배포 전에 자동으로 빌드하는 스크립트를 생성
+         > "predeploy": "npm run build"
+       - 'deploy' 스크립트 실행 시 npm이 자동으로 'predeploy'를 먼저 실행함
+  - 보안 룰 (DB, Storage)
+    - 사용자가 DB 또는 Storage에 파일을 읽고 쓰는 것을 허용/차단할지 결정할 수 있음
+    - 이 프로젝트에서 Firebase에 대한 호출은 전부 Front-End 코드로부터 도찱하므로, 사용자가 API key를 볼 수 있음
+      - 보안 룰과 함께라면, Firebase는 구체적으로 허용한 작업만 수행하게 됨
+      - 타인이 API key를 알고있다고 해도, 보안 룰을 바꿀 권한이 없음
+    - 배포한 프로젝트에 곧바로 적용됨 (새로 배포할 필요 없음)
+    - 설정법
+      - [콘솔] firestore 또는 storage의 '규칙'에 접속해 설정 가능
+      - if문으로 조건을 체크하여, 권한을 허용/차단을 설정
+      - { read, write, create, update, delete 등 }
+        - 'write'는 { create, update, delete }를 전부 포함
+      - > ex. 'tweets' 컬렉션 내의 모든 doc을 권한이 있는 사용자에게 read와 create를 허용하는 룰
+        > match /tweets/{doc} {
+        > &nbsp;&nbsp;allow read, create: if request.auth != null;
+        > }
+      - resource : 사용자가 수행하려는 문서(내용)을 의미함
+      - > ex. 오직 트윗을 생성한 본인만이 해당 트윗을 수정을 허용하는 룰
+        > allow update, delete: if request.auth.uid == resource.data.userId
+      - > ex. 로그인한 사용자가 1MB 이하의 파일만 업로드할 수 있는 룰
+        > allow write: if request.auth != null && resource.size < 1 \* 1024 \* 1024
+    - <a href="https://firebase.google.com/docs/storage/security/core-syntax?hl=ko&authuser=0" target="_blank">공식문서1</a> / <a href="https://firebase.google.com/docs/storage/security/rules-conditions?hl=ko&authuser=0" target="_blank">공식문서2</a>
+  - Firebase API key 보안
+    1. <a href="https://console.cloud.google.com/apis/credentials" target="_blank">'구글클라우드-API및서비스-사용자인증정보'</a>에 접속하기
+       - 프로젝트 선택 후, 'Browser key (auto created by Firebase)'에 접속
+    2. '애플리케이션 제한사항 설정'에서 API 호출 디바이스 제한 설정하기
+       - '웹사이트' 선택 후, 배포한 사이트 주소(프로토콜 제외) 입력 후, 저장
+         - 해당 웹사이트에서만 Firebase API를 사용할 수 있도록 설장하는 것
+         - localhost도 차단되므로, 개발 중에는 localhost를 추가해도 됨
+- **23-11-15 : Responsive app design(1)**
+  - _Update_
+    - _소셜로그인 구글 추가_
+    - _로그인한 사용자는 '로그인', '회원가입' 페이지에 접근 불가하도록 추가_
+  - _Doing_
+    - _반응형 웹 디자인_
 
 ---
+
+- To-Do
+  - firebase 콘솔에서 App Check 등록하기 (reCAPTCHA)
 
 노마드 코더 정책 상 강의요약은 괜찮으나, 코드와 필기는 공개적인 곳에 올리면 안 됨.  
 필기 요약지는 암호화된 .zip 파일로 저장함.

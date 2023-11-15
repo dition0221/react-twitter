@@ -3,11 +3,17 @@ import { auth } from "../firebase";
 
 export default function ProtectedRoute({
   children,
+  isUser,
 }: {
   children: React.ReactNode;
+  isUser?: boolean;
 }) {
   const user = auth.currentUser; // Check Log-In
-  if (!user) return <Navigate to="/login" />; // If not log-in, Go to <Login>
+
+  // If not user, Go to <Login>
+  if (!isUser && !user) return <Navigate to="/login" />;
+  // If user, Go to <Home>
+  if (isUser && user) return <Navigate to="/" />;
 
   return children;
 }

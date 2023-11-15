@@ -1,22 +1,31 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { auth } from "../firebase";
+// CSS: Media query
+import { customMedia } from "../styles/mediaQuery";
 
 const Wrapper = styled.div`
   width: 100%;
   max-width: 860px;
   height: 100%;
-  padding: 50px 0;
-  display: grid;
-  grid-template-columns: 1fr 4fr;
-  gap: 20px;
+  margin-top: 20px;
+  /* PC style */
+  ${customMedia.large} {
+    padding: 50px 0;
+    display: grid;
+    grid-template-columns: 1fr 9fr;
+    gap: 20px;
+  }
 `;
 
 const Menu = styled.nav`
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 20px;
+  /* PC style */
+  ${customMedia.large} {
+    flex-direction: column;
+  }
 `;
 
 const MenuItem = styled.div`
@@ -38,6 +47,14 @@ const MenuItem = styled.div`
       fill: tomato;
     }
   }
+  &:hover,
+  &:active {
+    background-color: #444;
+    &:not(.log-out) {
+      border-color: yellowgreen;
+    }
+  }
+  transition: all 0.2s ease-in-out;
 `;
 
 export default function Layout() {
@@ -101,6 +118,7 @@ export default function Layout() {
           </svg>
         </MenuItem>
       </Menu>
+
       <Outlet />
     </Wrapper>
   );
