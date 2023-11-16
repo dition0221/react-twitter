@@ -46,14 +46,6 @@ const Logo = styled.svg`
 `;
 
 const MenuItem = styled.div`
-  ${customMedia.small} {
-    width: 40px;
-    height: 40px;
-  }
-  ${customMedia.large} {
-    width: 50px;
-    height: 50px;
-  }
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,14 +62,27 @@ const MenuItem = styled.div`
       fill: tomato;
     }
   }
-  &:hover,
-  &:active {
-    background-color: #444;
-    &:not(.log-out) {
-      border-color: yellowgreen;
+  transition: all 0.2s ease-in-out;
+  ${customMedia.small} {
+    width: 40px;
+    height: 40px;
+    &:active {
+      background-color: #444;
+      &:not(.log-out) {
+        border-color: yellowgreen;
+      }
     }
   }
-  transition: all 0.2s ease-in-out;
+  ${customMedia.large} {
+    width: 50px;
+    height: 50px;
+    &:hover {
+      background-color: #444;
+      &:not(.log-out) {
+        border-color: yellowgreen;
+      }
+    }
+  }
 `;
 
 export default function Layout() {

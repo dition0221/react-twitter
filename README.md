@@ -367,14 +367,12 @@
       - _모바일 : 브라우저의 최상단으로 이동_
       - _PC : 트윗 컨테이너의 최상단으로 이동_
     - _favicon 업데이트_
-  - _Issue_
-    - _Rich Link Preview의 썸네일이 나오질 않음_
+    - _Rich Link Preview 및 썸네일 업데이트_
 
 ---
 
 - To-Do
   - firebase 콘솔에서 App Check 등록하기 (reCAPTCHA)
-  - Rich Link Preview의 썸네일 업데이트
   - 이메일, 소셜로그인 통합
   - 개발 완료 시 firebase API 호출 localhost 삭제하기
 
