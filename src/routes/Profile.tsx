@@ -15,13 +15,27 @@ import {
 import { ITweet } from "../components/Timeline";
 // Components
 import Tweet from "../components/Tweet";
+import AnchorBtn from "./../components/AnchorBtn";
+// CSS: Media query
+import { customMedia } from "../styles/mediaQuery";
 
-const Wrapper = styled.div`
+const Wrapper = styled.main`
+  display: grid;
+  gap: 30px;
+  overflow-y: auto;
+  ${customMedia.small} {
+    grid-template-rows: none;
+  }
+  ${customMedia.large} {
+    grid-template-rows: 1fr 5fr;
+  }
+`;
+
+const ProfileSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  /* overflow-y: auto; */
 `;
 
 const AvatarUpload = styled.label`
@@ -48,7 +62,8 @@ const AvatarInput = styled.input`
 `;
 
 const Name = styled.span`
-  font-size: 22px;
+  font-size: min(7vw, 28px);
+  font-weight: 600;
   display: flex;
   align-items: center;
   position: relative;
@@ -81,15 +96,21 @@ const EditNameBtn = styled.button`
   border-radius: 5px;
   text-transform: uppercase;
   position: absolute;
-  left: calc(100% + 10px);
+  left: calc(100% + 7px);
   cursor: pointer;
 `;
 
-const Tweets = styled.div`
+const Tweets = styled.section`
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  // overflow scroll
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari
+  }
+  scrollbar-width: none; // Firefox
 `;
 
 export default function Profile() {
@@ -162,51 +183,60 @@ export default function Profile() {
     if (e.key === "Enter") toggleEditName();
   };
 
+  // Anchor button for scrolling to top
+  const tweetsRef = useRef<HTMLDivElement>(null);
+
   return (
-    <Wrapper>
-      <AvatarUpload htmlFor="avatar">
-        {avatar ? (
-          <AvatarImg src={avatar} />
-        ) : (
-          <svg
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
-          </svg>
-        )}
-      </AvatarUpload>
-      <AvatarInput
-        onChange={onAvatarChange}
-        id="avatar"
-        type="file"
-        accept="image/*"
-      />
-
-      <Name>
-        {isEditName ? (
-          <EditNameInput
-            ref={editRef}
-            onKeyDown={onEditPressEnter}
-            defaultValue={user?.displayName ?? "Anonymous"}
-            maxLength={10}
-            type="text"
-            placeholder="Input username."
-            required
+    <>
+      <Wrapper>
+        <ProfileSection>
+          <AvatarUpload htmlFor="avatar">
+            {avatar ? (
+              <AvatarImg src={avatar} />
+            ) : (
+              <svg
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
+              </svg>
+            )}
+          </AvatarUpload>
+          <AvatarInput
+            onChange={onAvatarChange}
+            id="avatar"
+            type="file"
+            accept="image/*"
           />
-        ) : (
-          user?.displayName ?? "Anonymous"
-        )}
-        <EditNameBtn onClick={toggleEditName}>Edit</EditNameBtn>
-      </Name>
+          <Name>
+            {isEditName ? (
+              <EditNameInput
+                ref={editRef}
+                onKeyDown={onEditPressEnter}
+                defaultValue={user?.displayName ?? "Anonymous"}
+                maxLength={10}
+                type="text"
+                placeholder="Input username."
+                required
+              />
+            ) : (
+              user?.displayName ?? "Anonymous"
+            )}
+            <EditNameBtn onClick={toggleEditName}>Edit</EditNameBtn>
+          </Name>
+        </ProfileSection>
 
-      <Tweets>
-        {tweets.map((tweet) => (
-          <Tweet key={tweet.id} {...tweet} />
-        ))}
-      </Tweets>
-    </Wrapper>
+        <Tweets ref={tweetsRef}>
+          {tweets.map((tweet) => (
+            <Tweet key={tweet.id} {...tweet} />
+          ))}
+        </Tweets>
+      </Wrapper>
+
+      <AnchorBtn parent={tweetsRef} />
+      <AnchorBtn />
+    </>
   );
 }

@@ -6,10 +6,12 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { db } from "../firebase";
+// Components
 import Tweet from "./Tweet";
+import AnchorBtn from "./AnchorBtn";
 
 export interface ITweet {
   id: string;
@@ -20,7 +22,7 @@ export interface ITweet {
   username: string;
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.section`
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -68,11 +70,19 @@ export default function Timeline() {
     };
   }, []);
 
+  // Anchor button for scrolling to top
+  const timelineRef = useRef<HTMLDivElement>(null);
+
   return (
-    <Wrapper>
-      {tweets.map((tweet) => (
-        <Tweet key={tweet.id} {...tweet} />
-      ))}
-    </Wrapper>
+    <>
+      <Wrapper ref={timelineRef}>
+        {tweets.map((tweet) => (
+          <Tweet key={tweet.id} {...tweet} />
+        ))}
+      </Wrapper>
+
+      <AnchorBtn parent={timelineRef} />
+      <AnchorBtn />
+    </>
   );
 }

@@ -78,6 +78,8 @@ export default function PostTweetForm() {
       return setFile(files[0]);
     else return alert("Fail: Please attach an image file of less then 1MB.");
   };
+
+  /* Submit tweet */
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const user = auth.currentUser; // Check logged-in
@@ -96,12 +98,12 @@ export default function PostTweetForm() {
         const url = await getDownloadURL(result.ref);
         await updateDoc(doc, { photo: url });
       }
-      // reset
-      setTweet("");
-      setFile(null);
     } catch (error) {
       console.log(error);
     } finally {
+      // reset
+      setTweet("");
+      setFile(null);
       setIsLoading(false);
     }
   };

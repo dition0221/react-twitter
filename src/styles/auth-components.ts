@@ -1,4 +1,6 @@
 import styled from "styled-components";
+// CSS: Media query
+import { customMedia } from "./mediaQuery";
 
 /* CSS: <CreateAccount>, <Login> */
 export const Wrapper = styled.div`
@@ -47,6 +49,7 @@ export const Error = styled.span`
 
 export const Switcher = styled.span`
   margin-top: 20px;
+  font-size: min(5vw, 16px);
   a {
     color: #1d9bf0;
   }
@@ -91,6 +94,12 @@ export const PwForm = styled(Form)`
   height: fit-content;
   span {
     text-align: center;
+  }
+  ${customMedia.small} {
+    font-size: min(5vw, 16px);
+  }
+  ${customMedia.large} {
+    font-size: 22px;
   }
 `;
 

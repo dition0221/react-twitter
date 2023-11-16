@@ -58,12 +58,12 @@ const GlobalStyles = createGlobalStyle`
     box-sizing:border-box;
   }
   body {
-    padding: 0 10px;
     background-color: #222;
     color: white;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    padding: 0 10px;
   }
-`;
+  `;
 
 /* CSS */
 const Wrapper = styled.div`

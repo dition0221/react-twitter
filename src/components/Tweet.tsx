@@ -12,15 +12,29 @@ import { format, register } from "timeago.js";
 import koLocale from "timeago.js/lib/lang/ko";
 // Interfaces
 import { ITweet } from "./Timeline";
+// CSS: Media query
+import { customMedia } from "../styles/mediaQuery";
 
-const Wrapper = styled.div`
+const Wrapper = styled.article`
   background-color: black;
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-  padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 15px;
+  ${customMedia.small} {
+    padding: 10px;
+    gap: 10px;
+    &:last-child {
+      margin-bottom: 10px;
+    }
+  }
+  ${customMedia.large} {
+    padding: 20px;
+    gap: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 `;
 
 const Column = styled.div`
@@ -30,7 +44,7 @@ const Column = styled.div`
   &:last-child {
     position: relative;
     &:hover {
-      // Show edit, delete button
+      // If hover, Show edit/delete button
       button,
       label {
         display: flex;
@@ -43,12 +57,12 @@ const Column = styled.div`
 
 const Username = styled.span`
   font-weight: 600;
-  font-size: 15px;
+  font-size: min(4vw, 15px);
 `;
 
 const TweetContent = styled.p`
   margin: 10px 0;
-  font-size: 18px;
+  font-size: min(5vw, 18px);
 `;
 
 const EditTweetContent = styled.textarea`
@@ -73,9 +87,15 @@ const EditTweetContent = styled.textarea`
 `;
 
 const Photo = styled.img`
-  width: 100px;
-  height: 100px;
   border-radius: 15px;
+  ${customMedia.small} {
+    width: 75px;
+    height: 75px;
+  }
+  ${customMedia.large} {
+    width: 100px;
+    height: 100px;
+  }
 `;
 
 const DeleteBtn = styled.button`
@@ -83,16 +103,27 @@ const DeleteBtn = styled.button`
   color: white;
   font-weight: 600;
   border: 0;
-  font-size: 12px;
-  padding: 5px 10px;
   text-transform: uppercase;
   border-radius: 5px;
   cursor: pointer;
+  ${customMedia.small} {
+    font-size: min(3.5vw, 12px);
+    padding: 4px 6px;
+  }
+  ${customMedia.large} {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
 `;
 
 const EditBtn = styled(DeleteBtn)`
-  margin-left: 10px;
   background-color: royalblue;
+  ${customMedia.small} {
+    margin-left: 7px;
+  }
+  ${customMedia.large} {
+    margin-left: 10px;
+  }
 `;
 
 const CancelBtn = styled(EditBtn)`

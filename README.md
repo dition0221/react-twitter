@@ -342,7 +342,7 @@
       - > ex. 오직 트윗을 생성한 본인만이 해당 트윗을 수정을 허용하는 룰
         > allow update, delete: if request.auth.uid == resource.data.userId
       - > ex. 로그인한 사용자가 1MB 이하의 파일만 업로드할 수 있는 룰
-        > allow write: if request.auth != null && resource.size < 1 \* 1024 \* 1024
+        > allow write: if request.auth != null && request.resource.size < 1 \* 1024 \* 1024
     - <a href="https://firebase.google.com/docs/storage/security/core-syntax?hl=ko&authuser=0" target="_blank">공식문서1</a> / <a href="https://firebase.google.com/docs/storage/security/rules-conditions?hl=ko&authuser=0" target="_blank">공식문서2</a>
   - Firebase API key 보안
     1. <a href="https://console.cloud.google.com/apis/credentials" target="_blank">'구글클라우드-API및서비스-사용자인증정보'</a>에 접속하기
@@ -357,11 +357,26 @@
     - _로그인한 사용자는 '로그인', '회원가입' 페이지에 접근 불가하도록 추가_
   - _Doing_
     - _반응형 웹 디자인_
+- **23-11-16 : Responsive app design(2)**
+  - _Fix : [PostTweetForm] 스토리지에 업로드가 되지 않는 현상 수정_
+    - _firebase 보안룰 문제 : resource.size -> request.resource.size 수정_
+  - _Update_
+    - _반응형 웹 디자인 : 모바일, PC (중단점 : 768px)_
+    - _[Profile] 트윗만 스크롤 가능하도록 업데이트_
+    - _[Timeline, Profile] 트윗 컨테이너의 최상단 이동 anchor 버튼 생성_
+      - _모바일 : 브라우저의 최상단으로 이동_
+      - _PC : 트윗 컨테이너의 최상단으로 이동_
+    - _favicon 업데이트_
+  - _Issue_
+    - _Rich Link Preview의 썸네일이 나오질 않음_
 
 ---
 
 - To-Do
   - firebase 콘솔에서 App Check 등록하기 (reCAPTCHA)
+  - Rich Link Preview의 썸네일 업데이트
+  - 이메일, 소셜로그인 통합
+  - 개발 완료 시 firebase API 호출 localhost 삭제하기
 
 노마드 코더 정책 상 강의요약은 괜찮으나, 코드와 필기는 공개적인 곳에 올리면 안 됨.  
 필기 요약지는 암호화된 .zip 파일로 저장함.
