@@ -86,7 +86,8 @@ export default function App() {
   return (
     <Wrapper>
       <GlobalStyles />
-      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
+      {/* {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />} */}
+      <LoadingScreen />
     </Wrapper>
   );
 }

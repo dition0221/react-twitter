@@ -368,11 +368,19 @@
       - _PC : 트윗 컨테이너의 최상단으로 이동_
     - _favicon 업데이트_
     - _Rich Link Preview 및 썸네일 업데이트_
+- **23-11-17 : Detail**
+  - Issue
+    - 이메일 회원가입 시 이메일인증 시스템이 있음에도 불구하고, 가짜이메일은 막지 못한 현상
+      - 트윗 횟수 제한
+      - 해외 접속 차단
+      - reCAPTCHA 봇 걸러내기
+      - 이메일 주소 제한
 
 ---
 
 - To-Do
   - firebase 콘솔에서 App Check 등록하기 (reCAPTCHA)
+  - 트윗에 사용자의 프로필 이미지 추가
   - 이메일, 소셜로그인 통합
   - 개발 완료 시 firebase API 호출 localhost 삭제하기
 

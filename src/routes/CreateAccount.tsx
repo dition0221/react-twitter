@@ -19,6 +19,7 @@ import {
 // Components
 import GithubBtn from "../components/GithubBtn";
 import FindPw from "../components/FindPw";
+import GoogleBtn from "../components/GoogleBtn";
 
 export default function CreateAccount() {
   // Create account
@@ -38,9 +39,14 @@ export default function CreateAccount() {
     if (name === "password") setPassword(value);
   };
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    return alert("임시 폐쇄");
+    // !
     e.preventDefault();
     setError("");
+    // Handle exception
     if (isLoading || name === "" || email === "" || password === "") return;
+    const regex = /@naver\.com$/; // 네이버만 허용
+    if (!regex.test(email)) return;
     try {
       setIsLoading(true);
       // Create an account
@@ -98,12 +104,14 @@ export default function CreateAccount() {
         />
       </Form>
       {error !== "" ? <Error>{error}</Error> : null}
+
       <Switcher>
         Already have an account?&nbsp;
         <Link to="/login">Log In &rarr;</Link>
       </Switcher>
       <FindPw />
       <GithubBtn />
+      <GoogleBtn />
     </Wrapper>
   );
 }
