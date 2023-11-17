@@ -6,7 +6,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
-import { FirebaseError } from "firebase/app";
+// ! import { FirebaseError } from "firebase/app";
 // CSS
 import {
   Error,
@@ -62,7 +62,8 @@ export default function CreateAccount() {
       auth.signOut();
       navigate("/");
     } catch (e) {
-      if (e instanceof FirebaseError) setError(e.message);
+      // ! if (e instanceof FirebaseError) setError(e.message);
+      console.log(e);
     } finally {
       setIsLoading(false);
     }

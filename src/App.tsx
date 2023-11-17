@@ -1,8 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
-import { useEffect, useState } from "react";
-import { auth } from "./firebase";
+import { useState } from "react";
+// import { useEffect, useState } from "react";
+// import { auth } from "./firebase";
 // Routes
 import Layout from "./components/Layout";
 import Home from "./routes/Home";
@@ -75,19 +76,20 @@ const Wrapper = styled.div`
 export default function App() {
   // Show loading screen while checking firebase authentication
   const [isLoading, setIsLoading] = useState(true);
-  const init = async () => {
-    await auth.authStateReady(); // Check initial log-in
-    setIsLoading(false);
-  };
-  useEffect(() => {
-    init();
-  }, []);
+  // !
+  setIsLoading(true);
+  // const init = async () => {
+  //   await auth.authStateReady(); // Check initial log-in
+  //   setIsLoading(false);
+  // };
+  // useEffect(() => {
+  //   init();
+  // }, []);
 
   return (
     <Wrapper>
       <GlobalStyles />
-      {/* {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />} */}
-      <LoadingScreen />
+      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
     </Wrapper>
   );
 }
