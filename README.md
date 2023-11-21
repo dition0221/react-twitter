@@ -368,10 +368,17 @@
       - _PC : 트윗 컨테이너의 최상단으로 이동_
     - _favicon 업데이트_
     - _Rich Link Preview 및 썸네일 업데이트_
-- **23-11-17 : Detail**
-  - Issue
-    - 이메일 회원가입 시 이메일인증 시스템이 있음에도 불구하고, 가짜이메일은 막지 못한 현상 - 트윗 횟수 제한 - 해외 접속 차단 - reCAPTCHA 봇 걸러내기 - 이메일 주소 제한
-    <!-- CreateAccount, App 수정 -->
+- **23-11-17 : 🤣 Hacked by bot**
+  - _Problem : 악성봇에 의해 단시간에 DB할당량을 모두 사용당함_
+  - _Issue_
+    - _이메일 회원가입 시 이메일인증 시스템이 있음에도 불구하고, 가짜이메일은 막지 못한 현상_
+      - _트윗 횟수 제한하기_
+      - _해외 접속 차단하기_
+      - _reCAPTCHA 봇 걸러내기_
+      - _이메일 주소 제한하기_
+      <!-- ? CreateAccount, App 수정 -->
+- **23-11-21 : Security**
+  - reCAPTCHA Enterprise
 
 ---
 

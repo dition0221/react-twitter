@@ -45,8 +45,8 @@ export default function CreateAccount() {
     setError("");
     // Handle exception
     if (isLoading || name === "" || email === "" || password === "") return;
-    const regex = /@naver\.com$/; // 네이버만 허용
-    if (!regex.test(email)) return;
+    const regexp = /@naver\.com$/; // 네이버만 허용
+    if (!regexp.test(email)) return;
     try {
       setIsLoading(true);
       // Create an account
