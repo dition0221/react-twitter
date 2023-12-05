@@ -2,31 +2,59 @@ import { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
 import { FirebaseError } from "firebase/app";
+import { useForm } from "react-hook-form";
 // CSS
 import {
+  ErrorFindPw,
   FindPwWrapper,
   Input,
   Overlay,
   PwForm,
 } from "../styles/auth-components";
 
+interface IForm {
+  email: string;
+}
+
 export default function FindPw() {
+  // <Overlay>
   const [overlay, setOverlay] = useState(false);
   const overlayClick = () => setOverlay(false);
 
+  // <PwForm>
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<IForm>();
+
+  // Send e-mail to reset PW
   const [isLoading, setIsLoading] = useState(false);
-  const changePw = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const emailForPw = e.currentTarget.emailForPw.value as string;
-    if (emailForPw === "") return alert("Fail: Please input your E-mail.");
+  const onChangePw = async ({ email }: IForm) => {
+    // Handle exception
+    if (isLoading) return alert("Fail: Now loading..");
     try {
-      await sendPasswordResetEmail(auth, emailForPw);
-      alert(`Success: Send PW reset E-mail to ${emailForPw}`);
+      setIsLoading(true);
+      await sendPasswordResetEmail(auth, email);
+      alert(`Success: Send PW reset E-mail to ${email}`);
       setOverlay(false); // Close overlay
     } catch (error) {
-      if (error instanceof FirebaseError) alert(`Fail: ${error.message}`);
-      else alert("Fail: Bad Network or Bad E-mail.");
+      if (error instanceof FirebaseError) {
+        alert(`Fail: ${error.message}`);
+        setError(
+          "email",
+          { message: `Fail: ${error.message}` },
+          { shouldFocus: true }
+        );
+      } else {
+        alert("Fail: Bad Network or Bad E-mail.");
+        setError(
+          "email",
+          { message: "Fail: Bad Network or Bad E-mail." },
+          { shouldFocus: true }
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -39,15 +67,21 @@ export default function FindPw() {
       {overlay ? (
         <>
           <Overlay onClick={overlayClick} />
-          <PwForm onSubmit={changePw}>
+          <PwForm onSubmit={handleSubmit(onChangePw)}>
             <span>Send e-mail for changing password</span>
             <Input
-              name="emailForPw"
+              {...register("email", {
+                required: "Fail: Please input your E-mail.",
+                validate: {
+                  atSymbol: (v) => v.includes("@") || "Fail: It's not E-mail.",
+                },
+              })}
               type="email"
-              placeholder="E-mail"
+              placeholder="E-mail*"
               required
             />
             <Input type="submit" value={isLoading ? "Loading.." : "Submit"} />
+            <ErrorFindPw>{errors.email?.message}</ErrorFindPw>
           </PwForm>
         </>
       ) : null}

@@ -8,11 +8,14 @@ export default function GoogleBtn() {
   const navigate = useNavigate();
 
   const onSocialLogin = async () => {
+    // !
+    return alert("공사중");
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       navigate("/");
     } catch (error) {
+      alert("Fail: Social login is fail.");
       console.log(error);
     }
   };

@@ -1,9 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
-import { useState } from "react";
-// import { useEffect, useState } from "react";
-// import { auth } from "./firebase";
+import { useEffect, useState } from "react";
+import { auth } from "./firebase";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 // Routes
 import Layout from "./components/Layout";
 import Home from "./routes/Home";
@@ -76,20 +76,33 @@ const Wrapper = styled.div`
 export default function App() {
   // Show loading screen while checking firebase authentication
   const [isLoading, setIsLoading] = useState(true);
-  // !
-  setIsLoading(true);
-  // const init = async () => {
-  //   await auth.authStateReady(); // Check initial log-in
-  //   setIsLoading(false);
-  // };
-  // useEffect(() => {
-  //   init();
-  // }, []);
+  const init = async () => {
+    await auth.authStateReady(); // Check initial log-in
+    setIsLoading(false);
+  };
+  useEffect(() => {
+    init();
+  }, []);
 
   return (
     <Wrapper>
       <GlobalStyles />
-      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
+      {isLoading ? (
+        <LoadingScreen />
+      ) : (
+        <GoogleReCaptchaProvider
+          reCaptchaKey={
+            import.meta.env.VITE_FIREBASE_APPCHECK_PUBLIC_KEY as string
+          }
+          useRecaptchaNet
+          scriptProps={{
+            async: true,
+            defer: true,
+          }}
+        >
+          <RouterProvider router={router} />
+        </GoogleReCaptchaProvider>
+      )}
     </Wrapper>
   );
 }

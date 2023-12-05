@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -6,7 +6,9 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
-// ! import { FirebaseError } from "firebase/app";
+import { FirebaseError } from "firebase/app";
+import { useForm } from "react-hook-form";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 // CSS
 import {
   Error,
@@ -21,82 +23,137 @@ import GithubBtn from "../components/GithubBtn";
 import FindPw from "../components/FindPw";
 import GoogleBtn from "../components/GoogleBtn";
 
+interface IForm {
+  name: string;
+  email: string;
+  password: string;
+  password1: string;
+  firebase?: string;
+}
+
 export default function CreateAccount() {
-  // Create account
-  // TODO: 추후에 'React-Hook-Form' 패키지 사용하기
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      target: { name, value },
-    } = e;
-    if (name === "name") setName(value);
-    if (name === "email") setEmail(value);
-    if (name === "password") setPassword(value);
-  };
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    return alert("임시 폐쇄");
-    // !
-    e.preventDefault();
-    setError("");
-    // Handle exception
-    if (isLoading || name === "" || email === "" || password === "") return;
-    const regexp = /@naver\.com$/; // 네이버만 허용
-    if (!regexp.test(email)) return;
-    try {
-      setIsLoading(true);
+  const { executeRecaptcha } = useGoogleReCaptcha(); // reCAPTCHA v3
+
+  // <form>
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<IForm>();
+
+  // Submit <form>
+  const onSubmit = useCallback(
+    async ({ name, email, password, password1 }: IForm) => {
+      // reCAPTCHA v3
+      if (!executeRecaptcha) {
+        console.log("Execute recaptcha not yet available");
+        return;
+      }
+      const token = await executeRecaptcha("login");
+      // Handle exception
+      if (!token) return alert("Fail: reCAPTCHA failed.");
+      if (isLoading) return alert("Fail: It's currently loading..");
+      if (password !== password1)
+        return setError(
+          "password",
+          { message: "Fail: Password is different." },
+          { shouldFocus: true }
+        );
       // Create an account
-      const credentials = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      await sendEmailVerification(credentials.user);
-      // Set the name of the user
-      await updateProfile(credentials.user, { displayName: name });
-      // Log out & Redirect to the home page
-      auth.signOut();
-      navigate("/");
-    } catch (e) {
-      // ! if (e instanceof FirebaseError) setError(e.message);
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      try {
+        setIsLoading(true);
+        const credentials = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        await sendEmailVerification(credentials.user);
+        // Set the name of the user
+        await updateProfile(credentials.user, { displayName: name });
+        // Log out & Redirect to the home page
+        auth.signOut();
+        navigate("/");
+        alert(`Please check certification e-mail in ${email}.`);
+      } catch (e) {
+        if (e instanceof FirebaseError)
+          setError("firebase", { message: e.message });
+        console.log(e);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [executeRecaptcha, isLoading, navigate, setError]
+  );
 
   return (
     <Wrapper>
       <Title>Join 𝕏</Title>
-      <Form onSubmit={onSubmit}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Input
-          onChange={onChange}
-          name="name"
-          value={name}
-          placeholder="Name"
+          {...register("name", {
+            required: "Fail: Input 'Name*'.",
+            minLength: {
+              value: 2,
+              message: "Fail: input 'Name*' more than 2 characters.",
+            },
+            maxLength: {
+              value: 10,
+              message: "Fail: input 'Name*' less than 10 characters.",
+            },
+            validate: {
+              noAdmin: (value) =>
+                !value.toLowerCase().includes("admin") ||
+                "Fail: No 'admin' in 'Name*'.",
+            },
+          })}
+          placeholder="Name*"
           type="text"
           required
         />
         <Input
-          onChange={onChange}
-          name="email"
-          value={email}
-          placeholder="E-Mail"
+          {...register("email", {
+            required: "Fail: Input 'E-Mail*'.",
+            minLength: {
+              value: 11,
+              message: "Fail: input 'E-Mail*' more than 11 characters.",
+            },
+            pattern: {
+              value: /^[A-Za-z0-9._%+-]+@naver\.com$/,
+              message: "Fail: Only 'naver.com' emails allowed.",
+            },
+          })}
+          placeholder="E-Mail*"
           type="email"
           autoComplete="username"
           required
         />
         <Input
-          onChange={onChange}
-          name="password"
-          value={password}
-          placeholder="Password"
+          {...register("password", {
+            required: "Fail: Input 'Password*'.",
+            minLength: {
+              value: 6,
+              message: "Fail: input 'Password*' more than 6 characters.",
+            },
+          })}
+          placeholder="Password*"
           type="password"
           autoComplete="new-password"
+          required
+        />
+        <Input
+          {...register("password1", {
+            required: "Fail: Input 'Confirm Password*'.",
+            minLength: {
+              value: 6,
+              message:
+                "Fail: input 'Confirm Password*' more than 6 characters.",
+            },
+          })}
+          placeholder="Confirm Password*"
+          type="password"
           required
         />
         <Input
@@ -104,7 +161,11 @@ export default function CreateAccount() {
           value={isLoading ? "Loading.." : "Create Account"}
         />
       </Form>
-      {error !== "" ? <Error>{error}</Error> : null}
+      <Error>{errors.firebase?.message}</Error>
+      <Error>{errors.name?.message}</Error>
+      <Error>{errors.email?.message}</Error>
+      <Error>{errors.password?.message}</Error>
+      <Error>{errors.password1?.message}</Error>
 
       <Switcher>
         Already have an account?&nbsp;

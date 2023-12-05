@@ -1,13 +1,15 @@
 import { Navigate } from "react-router-dom";
 import { auth } from "../firebase";
 
+interface IProtectedRouteProps {
+  children: React.ReactNode;
+  isUser?: boolean;
+}
+
 export default function ProtectedRoute({
   children,
   isUser,
-}: {
-  children: React.ReactNode;
-  isUser?: boolean;
-}) {
+}: IProtectedRouteProps) {
   const user = auth.currentUser; // Check Log-In
 
   // If not user, Go to <Login>

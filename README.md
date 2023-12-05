@@ -3,7 +3,7 @@
 ### Firebase와 Vite를 사용해 Twitter React App을 클론합니다.
 
 <img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white"/> <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=white"/> <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=white"/> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/> <img src="https://img.shields.io/badge/styled&dash;components-DB7093?style=flat-square&logo=styledcomponents&logoColor=white"/>  
-<img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white"/> <img src="https://img.shields.io/badge/React&dash;Router-CA4245?style=flat-square&logo=reactrouter&logoColor=white"/> <img src="https://img.shields.io/badge/timeago.js-000?style=flat-square&logo=&logoColor=white"/>
+<img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white"/> <img src="https://img.shields.io/badge/React Router-CA4245?style=flat-square&logo=reactrouter&logoColor=white"/> <img src="https://img.shields.io/badge/timeago.js-000?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/React Hook Form-EC5990?style=flat-square&logo=reacthookform&logoColor=white"/> react-google-recaptcha-v3
 
 ---
 
@@ -376,9 +376,19 @@
       - _해외 접속 차단하기_
       - _reCAPTCHA 봇 걸러내기_
       - _이메일 주소 제한하기_
-      <!-- ? CreateAccount, App 수정 -->
 - **23-11-21 : Security**
-  - reCAPTCHA Enterprise
+  - reCAPTCHA v3
+    - v2와 다르게, 사용자의 액션을 절대 제한하지 않음
+      - 서버에게 특정 사용자의 점수를 알려주며, 점수를 통해 악의적인지 판단
+      - 0~1 사이의 값을 가지며, 0: 봇 / 1: 사람
+    - 시작하기 공식 문서 : https://firebase.google.com/docs/app-check/web/recaptcha-provider?hl=ko
+    - 'react-google-recaptcha-v3' 패키지 사용
+  - _Doing_
+    - _reCAPTCHA v3 적용_
+      - [main], [CreateAccount], [firebase.ts]
+    - _React-Hook-Form 대체_
+      - [CreateAccount], [FindPw]
+      <!-- TODO: GithubBtn, GoogleBtn 임시폐쇄 -->
 
 ---
 

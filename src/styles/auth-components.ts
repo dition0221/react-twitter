@@ -43,8 +43,20 @@ export const Input = styled.input`
 `;
 
 export const Error = styled.span`
+  text-align: center;
   font-weight: 600;
   color: tomato;
+`;
+
+export const ErrorFindPw = styled(Error)`
+  width: fit-content;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: #222;
+  text-decoration: underline;
 `;
 
 export const Switcher = styled.span`
@@ -84,7 +96,7 @@ export const Overlay = styled.div`
 export const PwForm = styled(Form)`
   width: 100%;
   max-width: 420px;
-  padding: 20px;
+  padding: 0 20px;
   position: fixed;
   top: 0;
   bottom: 0;
