@@ -8,8 +8,6 @@ export default function GithubBtn() {
   const navigate = useNavigate();
 
   const onSocialLogin = async () => {
-    // !
-    return alert("공사중");
     try {
       const provider = new GithubAuthProvider();
       await signInWithPopup(auth, provider);

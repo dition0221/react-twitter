@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -8,7 +8,6 @@ import { auth } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 import { useForm } from "react-hook-form";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 // CSS
 import {
   Error,
@@ -34,7 +33,6 @@ interface IForm {
 export default function CreateAccount() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const { executeRecaptcha } = useGoogleReCaptcha(); // reCAPTCHA v3
 
   // <form>
   const {
@@ -45,48 +43,38 @@ export default function CreateAccount() {
   } = useForm<IForm>();
 
   // Submit <form>
-  const onSubmit = useCallback(
-    async ({ name, email, password, password1 }: IForm) => {
-      // reCAPTCHA v3
-      if (!executeRecaptcha) {
-        console.log("Execute recaptcha not yet available");
-        return;
-      }
-      const token = await executeRecaptcha("login");
-      // Handle exception
-      if (!token) return alert("Fail: reCAPTCHA failed.");
-      if (isLoading) return alert("Fail: It's currently loading..");
-      if (password !== password1)
-        return setError(
-          "password",
-          { message: "Fail: Password is different." },
-          { shouldFocus: true }
-        );
-      // Create an account
-      try {
-        setIsLoading(true);
-        const credentials = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        await sendEmailVerification(credentials.user);
-        // Set the name of the user
-        await updateProfile(credentials.user, { displayName: name });
-        // Log out & Redirect to the home page
-        auth.signOut();
-        navigate("/");
-        alert(`Please check certification e-mail in ${email}.`);
-      } catch (e) {
-        if (e instanceof FirebaseError)
-          setError("firebase", { message: e.message });
-        console.log(e);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [executeRecaptcha, isLoading, navigate, setError]
-  );
+  const onSubmit = async ({ name, email, password, password1 }: IForm) => {
+    // Handle exception
+    if (isLoading) return alert("Fail: It's currently loading..");
+    if (password !== password1)
+      return setError(
+        "password",
+        { message: "Fail: Password is different." },
+        { shouldFocus: true }
+      );
+    // Create an account
+    try {
+      setIsLoading(true);
+      const credentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await sendEmailVerification(credentials.user);
+      // Set the name of the user
+      await updateProfile(credentials.user, { displayName: name });
+      // Log out & Redirect to the home page
+      auth.signOut();
+      navigate("/");
+      alert(`Please check certification e-mail in ${email}.`);
+    } catch (e) {
+      if (e instanceof FirebaseError)
+        setError("firebase", { message: e.message });
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Wrapper>
@@ -159,6 +147,7 @@ export default function CreateAccount() {
         <Input
           type="submit"
           value={isLoading ? "Loading.." : "Create Account"}
+          disabled={isLoading ? true : false}
         />
       </Form>
       <Error>{errors.firebase?.message}</Error>

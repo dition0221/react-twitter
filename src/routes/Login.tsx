@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
+import { useForm } from "react-hook-form";
 // CSS
 import {
   Error,
@@ -16,36 +17,58 @@ import {
 import GithubBtn from "../components/GithubBtn";
 import FindPw from "../components/FindPw";
 import GoogleBtn from "./../components/GoogleBtn";
+import { ReCaptchaContext } from "../App";
+
+interface IForm {
+  email: string;
+  password: string;
+  firebase?: string;
+  reCaptcha?: string;
+}
 
 export default function CreateAccount() {
-  // TODO: 추후에 'React-Hook-Form' 패키지 사용하기
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      target: { name, value },
-    } = e;
-    if (name === "email") setEmail(value);
-    if (name === "password") setPassword(value);
-  };
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    if (isLoading || email === "" || password === "") return;
+
+  // <form>
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<IForm>();
+
+  // ! reCAPTCHA
+  // TODO: null값에서 안 바뀜 -> 바뀌어야 함
+  const ref = useContext(ReCaptchaContext);
+  console.log("ref", ref);
+
+  // Submit <form>
+  const onSubmit = async ({ email, password }: IForm) => {
+    // Handle exception
+    if (isLoading) return alert("Fail: It's currently loading..");
     try {
       setIsLoading(true);
+      // Check reCAPTCHA
+      const token = await ref?.executeAsync();
+      console.log("token", token);
+      if (!token)
+        throw setError("reCaptcha", { message: "Fail: reCAPTCHA error." });
       // Log-In
       await signInWithEmailAndPassword(auth, email, password);
       if (!auth.currentUser?.emailVerified)
-        throw setError("Not e-mail verified.");
+        throw setError(
+          "email",
+          { message: "Fail: Not e-mail verified." },
+          { shouldFocus: true }
+        );
       // Redirect to the home page
       navigate("/");
     } catch (e) {
-      if (e instanceof FirebaseError) setError(e.message);
+      if (e instanceof FirebaseError)
+        setError("firebase", { message: e.message });
     } finally {
+      ref?.reset(); // Reset reCAPTCHA
       setIsLoading(false);
     }
   };
@@ -53,28 +76,49 @@ export default function CreateAccount() {
   return (
     <Wrapper>
       <Title>Log into 𝕏</Title>
-      <Form onSubmit={onSubmit}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Input
-          onChange={onChange}
-          name="email"
-          value={email}
-          placeholder="E-Mail"
+          {...register("email", {
+            required: "Fail: Input 'E-Mail*'.",
+            minLength: {
+              value: 11,
+              message: "Fail: input 'E-Mail*' more than 11 characters.",
+            },
+            pattern: {
+              value: /^[A-Za-z0-9._%+-]+@naver\.com$/,
+              message: "Fail: Only 'naver.com' emails allowed.",
+            },
+          })}
+          placeholder="E-Mail*"
           type="email"
           autoComplete="username"
           required
         />
         <Input
-          onChange={onChange}
-          name="password"
-          value={password}
-          placeholder="Password"
+          {...register("password", {
+            required: "Fail: Input 'Password*'.",
+            minLength: {
+              value: 6,
+              message: "Fail: input 'Password*' more than 6 characters.",
+            },
+          })}
+          placeholder="Password*"
           type="password"
           autoComplete="current-password"
           required
         />
-        <Input type="submit" value={isLoading ? "Loading.." : "Log In"} />
+
+        <Input
+          type="submit"
+          value={isLoading ? "Loading.." : "Log In"}
+          disabled={isLoading ? true : false}
+        />
       </Form>
-      {error !== "" ? <Error>{error}</Error> : null}
+      <Error>{errors.email?.message}</Error>
+      <Error>{errors.password?.message}</Error>
+      <Error>{errors.firebase?.message}</Error>
+      <Error>{errors.reCaptcha?.message}</Error>
+
       <Switcher>
         Don't have an account?&nbsp;
         <Link to="/create-account">Create One &rarr;</Link>

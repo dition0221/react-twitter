@@ -374,21 +374,30 @@
     - _이메일 회원가입 시 이메일인증 시스템이 있음에도 불구하고, 가짜이메일은 막지 못한 현상_
       - _트윗 횟수 제한하기_
       - _해외 접속 차단하기_
-      - _reCAPTCHA 봇 걸러내기_
+      - _reCAPTCHA를 사용해 bot 걸러내기_
       - _이메일 주소 제한하기_
 - **23-11-21 : Security**
+- **23-12-05 : Security + React-Hook-Form (1)**
   - reCAPTCHA v3
     - v2와 다르게, 사용자의 액션을 절대 제한하지 않음
       - 서버에게 특정 사용자의 점수를 알려주며, 점수를 통해 악의적인지 판단
       - 0~1 사이의 값을 가지며, 0: 봇 / 1: 사람
-    - 시작하기 공식 문서 : https://firebase.google.com/docs/app-check/web/recaptcha-provider?hl=ko
-    - 'react-google-recaptcha-v3' 패키지 사용
+    - <a href="https://firebase.google.com/docs/app-check/web/recaptcha-provider?hl=ko" target="_blank">시작하기 공식 문서</a>
+    - <a href="https://www.npmjs.com/package/react-google-recaptcha-v3" target="_blank">'react-google-recaptcha-v3'</a> 패키지 사용
   - _Doing_
     - _reCAPTCHA v3 적용_
       - [main], [CreateAccount], [firebase.ts]
-    - _React-Hook-Form 대체_
+    - _React-Hook-Form 대체 및 검증 조건 생성_
       - [CreateAccount], [FindPw]
-      <!-- TODO: GithubBtn, GoogleBtn 임시폐쇄 -->
+  - _Issue_
+    - _reCAPTCHA v3: Firebase: Error (auth/firebase-app-check-token-is-invalid.)._
+- **23-12-07 : Security + React-Hook-Form (2)**
+  - reCAPTCHA v2 invisible로 대체
+    - <a href="https://www.npmjs.com/package/react-google-recaptcha" target="_blank">react-google-recaptcha</a> 패키지 사용
+    - <a href="https://www.npmjs.com/package/@types/react-google-recaptcha" target="_blank">@types/react-google-recaptcha</a> 패키지 사용
+  - _Doing_
+    - _React-Hook-Form 대체 및 검증 조건 생성_
+      - [login]
 
 ---
 

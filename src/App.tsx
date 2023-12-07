@@ -1,9 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext, useRef } from "react";
 import { auth } from "./firebase";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import ReCAPTCHA from "react-google-recaptcha";
 // Routes
 import Layout from "./components/Layout";
 import Home from "./routes/Home";
@@ -13,6 +13,7 @@ import CreateAccount from "./routes/CreateAccount";
 // Components
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoute from "./components/ProtectedRoute";
+// ? import ReCaptcha from "./components/ReCaptcha";
 
 /* Router */
 const router = createBrowserRouter([
@@ -73,6 +74,9 @@ const Wrapper = styled.div`
   justify-content: center;
 `;
 
+// !
+export const ReCaptchaContext = createContext<ReCAPTCHA | null>(null);
+
 export default function App() {
   // Show loading screen while checking firebase authentication
   const [isLoading, setIsLoading] = useState(true);
@@ -80,8 +84,13 @@ export default function App() {
     await auth.authStateReady(); // Check initial log-in
     setIsLoading(false);
   };
+
+  // reCAPTCHA v2 (invisible)
+  const reCaptchaRef = useRef<ReCAPTCHA>(null);
+
   useEffect(() => {
     init();
+    console.log("reCaptchaRef", reCaptchaRef.current);
   }, []);
 
   return (
@@ -90,18 +99,19 @@ export default function App() {
       {isLoading ? (
         <LoadingScreen />
       ) : (
-        <GoogleReCaptchaProvider
-          reCaptchaKey={
-            import.meta.env.VITE_FIREBASE_APPCHECK_PUBLIC_KEY as string
-          }
-          useRecaptchaNet
-          scriptProps={{
-            async: true,
-            defer: true,
-          }}
-        >
+        <ReCaptchaContext.Provider value={reCaptchaRef.current}>
+          <ReCAPTCHA
+            // style={{ display: "none" }}
+            ref={reCaptchaRef}
+            size="invisible"
+            sitekey={
+              import.meta.env.DEV
+                ? import.meta.env.VITE_FIREBASE_APPCHECK_DEV_PUBLIC_KEY
+                : import.meta.env.VITE_FIREBASE_APPCHECK_PUBLIC_KEY
+            }
+          />
           <RouterProvider router={router} />
-        </GoogleReCaptchaProvider>
+        </ReCaptchaContext.Provider>
       )}
     </Wrapper>
   );

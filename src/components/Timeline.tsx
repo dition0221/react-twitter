@@ -81,6 +81,7 @@ export default function Timeline() {
         ))}
       </Wrapper>
 
+      {/* Go to the top */}
       <AnchorBtn parent={timelineRef} />
       <AnchorBtn />
     </>
