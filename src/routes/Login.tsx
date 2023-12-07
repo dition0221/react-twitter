@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -17,7 +17,7 @@ import {
 import GithubBtn from "../components/GithubBtn";
 import FindPw from "../components/FindPw";
 import GoogleBtn from "./../components/GoogleBtn";
-import { ReCaptchaContext } from "../App";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface IForm {
   email: string;
@@ -38,10 +38,8 @@ export default function CreateAccount() {
     setError,
   } = useForm<IForm>();
 
-  // ! reCAPTCHA
-  // TODO: null값에서 안 바뀜 -> 바뀌어야 함
-  const ref = useContext(ReCaptchaContext);
-  console.log("ref", ref);
+  // reCAPTCHA
+  const reCaptchaRef = useRef<ReCAPTCHA>(null);
 
   // Submit <form>
   const onSubmit = async ({ email, password }: IForm) => {
@@ -50,8 +48,7 @@ export default function CreateAccount() {
     try {
       setIsLoading(true);
       // Check reCAPTCHA
-      const token = await ref?.executeAsync();
-      console.log("token", token);
+      const token = await reCaptchaRef.current?.executeAsync();
       if (!token)
         throw setError("reCaptcha", { message: "Fail: reCAPTCHA error." });
       // Log-In
@@ -68,7 +65,7 @@ export default function CreateAccount() {
       if (e instanceof FirebaseError)
         setError("firebase", { message: e.message });
     } finally {
-      ref?.reset(); // Reset reCAPTCHA
+      reCaptchaRef.current?.reset(); // Reset reCAPTCHA
       setIsLoading(false);
     }
   };
@@ -107,7 +104,6 @@ export default function CreateAccount() {
           autoComplete="current-password"
           required
         />
-
         <Input
           type="submit"
           value={isLoading ? "Loading.." : "Log In"}
@@ -126,6 +122,17 @@ export default function CreateAccount() {
       <FindPw />
       <GithubBtn />
       <GoogleBtn />
+
+      <ReCAPTCHA
+        // style={{ display: "none" }}
+        ref={reCaptchaRef}
+        size="invisible"
+        sitekey={
+          import.meta.env.DEV
+            ? import.meta.env.VITE_FIREBASE_APPCHECK_DEV_PUBLIC_KEY
+            : import.meta.env.VITE_FIREBASE_APPCHECK_PUBLIC_KEY
+        }
+      />
     </Wrapper>
   );
 }

@@ -385,19 +385,27 @@
     - <a href="https://firebase.google.com/docs/app-check/web/recaptcha-provider?hl=ko" target="_blank">시작하기 공식 문서</a>
     - <a href="https://www.npmjs.com/package/react-google-recaptcha-v3" target="_blank">'react-google-recaptcha-v3'</a> 패키지 사용
   - _Doing_
-    - _reCAPTCHA v3 적용_
-      - [main], [CreateAccount], [firebase.ts]
+    - _~~reCAPTCHA v3 적용~~_
+      - _~~[main], [CreateAccount], [firebase.ts]~~_
     - _React-Hook-Form 대체 및 검증 조건 생성_
-      - [CreateAccount], [FindPw]
-  - _Issue_
-    - _reCAPTCHA v3: Firebase: Error (auth/firebase-app-check-token-is-invalid.)._
+      - _[CreateAccount], [FindPw]_
+  - _~~Issue~~_
+    - _~~reCAPTCHA v3: Firebase: Error (auth/firebase-app-check-token-is-invalid.).~~_
 - **23-12-07 : Security + React-Hook-Form (2)**
   - reCAPTCHA v2 invisible로 대체
     - <a href="https://www.npmjs.com/package/react-google-recaptcha" target="_blank">react-google-recaptcha</a> 패키지 사용
     - <a href="https://www.npmjs.com/package/@types/react-google-recaptcha" target="_blank">@types/react-google-recaptcha</a> 패키지 사용
   - _Doing_
     - _React-Hook-Form 대체 및 검증 조건 생성_
-      - [login]
+      - _[CreateAccount], [FindPw]_
+      - _[login]_
+- **23-12-08 : Security + React-Hook-Form (3)**
+  - _Doing_
+    - _React-Hook-Form 대체 및 검증 조건 생성_
+      - _[CreateAccount], [FindPw]_
+      - _[login]_
+    - _reCAPTCHA v2 (invisible) 적용_
+      - _[login]_
 
 ---
 
