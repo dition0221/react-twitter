@@ -16,12 +16,15 @@ import { ITweet } from "../components/Timeline";
 // Components
 import Tweet from "../components/Tweet";
 import AnchorBtn from "./../components/AnchorBtn";
+import { Error } from "../styles/auth-components";
 // CSS: Media query
 import { customMedia } from "../styles/mediaQuery";
+import { useForm } from "react-hook-form";
+import { FirebaseError } from "firebase/app";
 
 const Wrapper = styled.main`
   display: grid;
-  gap: 30px;
+  gap: 50px;
   overflow-y: auto;
   ${customMedia.small} {
     grid-template-rows: none;
@@ -32,10 +35,12 @@ const Wrapper = styled.main`
 `;
 
 const ProfileSection = styled.section`
+  height: 160px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
+  position: relative;
 `;
 
 const AvatarUpload = styled.label`
@@ -66,11 +71,15 @@ const Name = styled.span`
   font-weight: 600;
   display: flex;
   align-items: center;
-  position: relative;
+`;
+
+const Form = styled.form`
+  /* height: 63px; */
 `;
 
 const EditNameInput = styled.input`
   width: 200px;
+  display: block;
   padding: 5px 10px;
   background-color: transparent;
   color: white;
@@ -87,17 +96,36 @@ const EditNameInput = styled.input`
 `;
 
 const EditNameBtn = styled.button`
+  padding: 5px 10px;
   background-color: royalblue;
   color: white;
-  font-size: 12px;
   font-weight: 600;
   border: 0;
-  padding: 5px 10px;
-  border-radius: 5px;
   text-transform: uppercase;
-  position: absolute;
-  left: calc(100% + 7px);
+  border-radius: 5px;
   cursor: pointer;
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+const SubmitNameBtn = styled(EditNameBtn).attrs({
+  as: "input",
+  type: "submit",
+})`
+  background-color: greenyellow;
+  color: black;
+`;
+
+const CancelNameBtn = styled(EditNameBtn)`
+  background-color: lightgray;
+  color: black;
+  ${customMedia.small} {
+    margin-left: 7px;
+  }
+  ${customMedia.large} {
+    margin-left: 10px;
+  }
 `;
 
 const Tweets = styled.section`
@@ -112,6 +140,10 @@ const Tweets = styled.section`
   }
   scrollbar-width: none; // Firefox
 `;
+
+interface IEditNameForm {
+  name: string;
+}
 
 export default function Profile() {
   const user = auth.currentUser;
@@ -160,28 +192,28 @@ export default function Profile() {
   }, [user?.uid]);
 
   /* Edit username */
-  const editRef = useRef<HTMLInputElement>(null);
   const [isEditName, setIsEditName] = useState(false);
-  const toggleEditName = async () => {
-    if (isEditName) {
-      // Handle exception
-      if (!user) return;
-      if (!editRef.current?.value) return alert("Fail: Please write username.");
-      if (editRef.current.value.length > 10)
-        return alert("Fail: Please write no more than 10 characters.");
-      // Update
-      try {
-        await updateProfile(user, { displayName: editRef.current.value });
-      } catch (error) {
-        console.log(error);
-      }
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IEditNameForm>();
+  const onEditName = async ({ name }: IEditNameForm) => {
+    // Handle exception
+    if (!user || isLoading) return;
+    try {
+      setIsLoading(true);
+      await updateProfile(user, { displayName: name });
+      setIsEditName(false);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof FirebaseError) alert(error.message);
+    } finally {
+      setIsLoading(false);
     }
-    // On/Off
-    setIsEditName((prev) => !prev);
   };
-  const onEditPressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") toggleEditName();
-  };
+  const toggleEditName = () => setIsEditName((prev) => !prev);
 
   // Anchor button for scrolling to top
   const tweetsRef = useRef<HTMLDivElement>(null);
@@ -212,20 +244,38 @@ export default function Profile() {
           />
           <Name>
             {isEditName ? (
-              <EditNameInput
-                ref={editRef}
-                onKeyDown={onEditPressEnter}
-                defaultValue={user?.displayName ?? "Anonymous"}
-                maxLength={10}
-                type="text"
-                placeholder="Input username."
-                required
-              />
+              <Form onSubmit={handleSubmit(onEditName)}>
+                <EditNameInput
+                  {...register("name", {
+                    required: "Fail: Please write username.",
+                    maxLength: {
+                      value: 10,
+                      message: "Fail: Please write no more than 10 characters.",
+                    },
+                  })}
+                  defaultValue={user?.displayName ?? "Anonymous"}
+                  maxLength={10}
+                  type="text"
+                  placeholder="Input username."
+                  required
+                />
+                <SubmitNameBtn
+                  value={isLoading ? "load..." : "submit"}
+                  disabled={isLoading}
+                />
+                <CancelNameBtn onClick={toggleEditName}>Cancel</CancelNameBtn>
+              </Form>
             ) : (
               user?.displayName ?? "Anonymous"
             )}
-            <EditNameBtn onClick={toggleEditName}>Edit</EditNameBtn>
           </Name>
+          {isEditName ? (
+            <Error style={{ position: "absolute", top: "calc(100% + 5px)" }}>
+              {errors.name?.message}
+            </Error>
+          ) : (
+            <EditNameBtn onClick={toggleEditName}>Edit</EditNameBtn>
+          )}
         </ProfileSection>
 
         <Tweets ref={tweetsRef}>

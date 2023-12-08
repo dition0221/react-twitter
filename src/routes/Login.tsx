@@ -62,6 +62,7 @@ export default function CreateAccount() {
       // Redirect to the home page
       navigate("/");
     } catch (e) {
+      console.log(e);
       if (e instanceof FirebaseError)
         setError("firebase", { message: e.message });
     } finally {
@@ -104,6 +105,16 @@ export default function CreateAccount() {
           autoComplete="current-password"
           required
         />
+        <ReCAPTCHA
+          // style={{ display: "none" }}
+          ref={reCaptchaRef}
+          size="invisible"
+          sitekey={
+            import.meta.env.DEV
+              ? import.meta.env.VITE_FIREBASE_APPCHECK_DEV_PUBLIC_KEY
+              : import.meta.env.VITE_FIREBASE_APPCHECK_PUBLIC_KEY
+          }
+        />
         <Input
           type="submit"
           value={isLoading ? "Loading.." : "Log In"}
@@ -122,17 +133,6 @@ export default function CreateAccount() {
       <FindPw />
       <GithubBtn />
       <GoogleBtn />
-
-      <ReCAPTCHA
-        // style={{ display: "none" }}
-        ref={reCaptchaRef}
-        size="invisible"
-        sitekey={
-          import.meta.env.DEV
-            ? import.meta.env.VITE_FIREBASE_APPCHECK_DEV_PUBLIC_KEY
-            : import.meta.env.VITE_FIREBASE_APPCHECK_PUBLIC_KEY
-        }
-      />
     </Wrapper>
   );
 }

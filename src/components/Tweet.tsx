@@ -7,13 +7,17 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { useRef, useState } from "react";
-import { format, register } from "timeago.js";
+import { useState } from "react";
+import { format, register as timeagoRegister } from "timeago.js";
 import koLocale from "timeago.js/lib/lang/ko";
+import { useForm } from "react-hook-form";
 // Interfaces
 import { ITweet } from "./Timeline";
 // CSS: Media query
 import { customMedia } from "../styles/mediaQuery";
+// Components
+import { Error } from "../styles/auth-components";
+import { FirebaseError } from "firebase/app";
 
 const Wrapper = styled.article`
   background-color: black;
@@ -106,6 +110,9 @@ const DeleteBtn = styled.button`
   text-transform: uppercase;
   border-radius: 5px;
   cursor: pointer;
+  &:hover {
+    opacity: 0.9;
+  }
   ${customMedia.small} {
     font-size: min(3.5vw, 12px);
     padding: 4px 6px;
@@ -114,6 +121,15 @@ const DeleteBtn = styled.button`
     font-size: 12px;
     padding: 5px 10px;
   }
+`;
+
+const SubmitBtn = styled(DeleteBtn).attrs({
+  as: "input",
+  type: "submit",
+  value: "submit",
+})`
+  background-color: greenyellow;
+  color: black;
 `;
 
 const EditBtn = styled(DeleteBtn)`
@@ -129,6 +145,12 @@ const EditBtn = styled(DeleteBtn)`
 const CancelBtn = styled(EditBtn)`
   background-color: lightgray;
   color: black;
+  ${customMedia.small} {
+    margin-right: 7px;
+  }
+  ${customMedia.large} {
+    margin-right: 10px;
+  }
 `;
 
 const EditPhotoInput = styled.input`
@@ -164,6 +186,11 @@ const DeletePhoto = styled(EditPhoto).attrs({ as: "button" })`
   }
 `;
 
+interface IEditTweetForm {
+  editTweet: string;
+  firebase?: string;
+}
+
 export default function Tweet({
   createdAt,
   username,
@@ -181,30 +208,36 @@ export default function Tweet({
   };
 
   /* relative time */
-  register("ko", koLocale);
+  timeagoRegister("ko", koLocale);
   const relativeTime = format(createdAt, "ko");
 
   /* Edit tweet */
   const [isEdit, setIsEdit] = useState(false);
-  const editTweet = useRef<HTMLTextAreaElement>(null);
-  const toggleEdit = async () => {
-    // Handle exception
-    if (user?.uid !== userId) return alert("Error: Different ID.");
-    if (!isEdit) return setIsEdit(true);
-    if (!editTweet.current?.value) return alert("Fail: Please write tweet.");
-    if (editTweet.current?.value.length > 180)
-      return alert("Fail: Please write no more than 180 characters.");
-    // Edit (if 'isEdit')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<IEditTweetForm>();
+  const onEdit = async ({ editTweet }: IEditTweetForm) => {
     try {
-      const tweetToUpdate = { tweet: editTweet.current?.value };
+      const tweetToUpdate = { tweet: editTweet };
       await updateDoc(doc(db, "tweets", id), tweetToUpdate);
     } catch (error) {
       console.log(error);
+      if (error instanceof FirebaseError)
+        setError("firebase", { message: error.message });
+      else setError("firebase", { message: "Error: Firebase." });
     } finally {
       setIsEdit(false);
     }
   };
-  const onCancelEdit = () => setIsEdit(false);
+  const toggleEdit = () => {
+    // Handle exception
+    if (user?.uid !== userId) return alert("Error: Different ID.");
+    // Operate fn.
+    setIsEdit((prev) => !prev);
+  };
 
   /* Delete tweet */
   const onDelete = async () => {
@@ -249,9 +282,9 @@ export default function Tweet({
   /* Delete photo */
   const onDeletePhoto = async () => {
     // Handle exception
-    if (!photo) return;
+    if (!photo || user?.uid !== userId) return;
     const ok = confirm("Are you sure delete photo?");
-    if (!ok || user?.uid !== userId) return;
+    if (!ok) return;
     // Delete
     try {
       deletePhotoStorage(); // storage
@@ -266,24 +299,36 @@ export default function Tweet({
       <Column>
         <Username>{`${username} (${relativeTime})`}</Username>
         {isEdit ? (
-          <EditTweetContent
-            ref={editTweet}
-            rows={5}
-            maxLength={180}
-            defaultValue={tweet}
-            placeholder="Edit tweet."
-            required
-          />
+          <form onSubmit={handleSubmit(onEdit)}>
+            <EditTweetContent
+              {...register("editTweet", {
+                required: "Fail: Please write tweet.",
+                maxLength: {
+                  value: 180,
+                  message: "Fail: Please write no more than 180 characters.",
+                },
+              })}
+              rows={5}
+              maxLength={180}
+              defaultValue={tweet}
+              placeholder="Edit tweet."
+              required
+            />
+            <SubmitBtn />
+            <CancelBtn onClick={toggleEdit}>Cancel</CancelBtn>
+            <Error>{errors.editTweet?.message}</Error>
+          </form>
         ) : (
-          <TweetContent>{tweet}</TweetContent>
-        )}
-        {user?.uid === userId ? (
           <>
-            <DeleteBtn onClick={onDelete}>Delete</DeleteBtn>
-            <EditBtn onClick={toggleEdit}>Edit</EditBtn>
-            {isEdit && <CancelBtn onClick={onCancelEdit}>Cancel</CancelBtn>}
+            <TweetContent>{tweet}</TweetContent>
+            {user?.uid === userId ? (
+              <>
+                <DeleteBtn onClick={onDelete}>Delete</DeleteBtn>
+                <EditBtn onClick={toggleEdit}>Edit</EditBtn>
+              </>
+            ) : null}
           </>
-        ) : null}
+        )}
       </Column>
 
       <Column>

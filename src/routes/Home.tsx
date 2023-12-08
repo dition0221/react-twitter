@@ -7,7 +7,6 @@ import { customMedia } from "../styles/mediaQuery";
 
 const Wrapper = styled.main`
   display: grid;
-  gap: 30px;
   overflow-y: auto;
   ${customMedia.small} {
     grid-template-rows: none;

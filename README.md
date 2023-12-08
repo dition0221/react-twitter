@@ -400,12 +400,14 @@
       - _[CreateAccount], [FindPw]_
       - _[login]_
 - **23-12-08 : Security + React-Hook-Form (3)**
-  - _Doing_
+  - _Update_
     - _React-Hook-Form 대체 및 검증 조건 생성_
       - _[CreateAccount], [FindPw]_
-      - _[login]_
+      - _[Login]_
+      - _[PostTweetForm], [Tweet], [Profile]_
     - _reCAPTCHA v2 (invisible) 적용_
-      - _[login]_
+      - _[Login]_
+      - _[PostTweetForm]_
 
 ---
 
