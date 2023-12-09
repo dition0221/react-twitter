@@ -13,9 +13,9 @@
 >
 > ![image](https://github.com/dition0221/dition0221/assets/129196812/cfa6ca74-762c-4765-a005-ddbf52c23d3e)
 >
-> **Firebase의 Auth, DB, Storage**를 이용하여 Back-End없이 기능을 구성한 '**X-Twitter 클론 사이트**'입니다.
-> **반응형 웹 디자인**을 적용해 모바일 기기에서도 원활하게 사용할 수 있습니다.
-> CRA보다 속도가 빠른 **Vite**를 사용했기에, 쾌적한 사용감을 느낄 수 있습니다.
+> **Firebase의 Auth, DB, Storage**를 이용하여 Back-End없이 기능을 구성한 '**X-Twitter 클론 사이트**'입니다.  
+> **반응형 웹 디자인**을 적용해 모바일 기기에서도 원활하게 사용할 수 있습니다.  
+> CRA보다 속도가 빠른 **Vite**를 사용했기에, 쾌적한 사용감을 느낄 수 있습니다.  
 > Bot으로부터 로렘입숨 DB테러로 인해, **reCAPTCHA** 적용 및 회원가입/로그인 시 특정 이메일주소만 가능하도록 수정하였습니다.
 >
 > - [ Login & Join ]
