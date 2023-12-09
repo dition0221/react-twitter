@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -21,6 +21,7 @@ import {
 import GithubBtn from "../components/GithubBtn";
 import FindPw from "../components/FindPw";
 import GoogleBtn from "../components/GoogleBtn";
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface IForm {
   name: string;
@@ -28,11 +29,15 @@ interface IForm {
   password: string;
   password1: string;
   firebase?: string;
+  reCaptcha?: string;
 }
 
 export default function CreateAccount() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  // reCAPTCHA
+  const reCaptchaRef = useRef<ReCAPTCHA>(null);
 
   // <form>
   const {
@@ -52,9 +57,13 @@ export default function CreateAccount() {
         { message: "Fail: Password is different." },
         { shouldFocus: true }
       );
-    // Create an account
     try {
       setIsLoading(true);
+      // Check reCAPTCHA
+      const token = await reCaptchaRef.current?.executeAsync();
+      if (!token)
+        throw setError("reCaptcha", { message: "Fail: reCAPTCHA error." });
+      // Create an account
       const credentials = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -144,17 +153,27 @@ export default function CreateAccount() {
           type="password"
           required
         />
+        <ReCAPTCHA
+          ref={reCaptchaRef}
+          size="invisible"
+          sitekey={
+            import.meta.env.DEV
+              ? import.meta.env.VITE_FIREBASE_APPCHECK_DEV_PUBLIC_KEY
+              : import.meta.env.VITE_FIREBASE_APPCHECK_PUBLIC_KEY
+          }
+        />
         <Input
           type="submit"
           value={isLoading ? "Loading.." : "Create Account"}
           disabled={isLoading ? true : false}
         />
       </Form>
-      <Error>{errors.firebase?.message}</Error>
       <Error>{errors.name?.message}</Error>
       <Error>{errors.email?.message}</Error>
       <Error>{errors.password?.message}</Error>
       <Error>{errors.password1?.message}</Error>
+      <Error>{errors.firebase?.message}</Error>
+      <Error>{errors.reCaptcha?.message}</Error>
 
       <Switcher>
         Already have an account?&nbsp;

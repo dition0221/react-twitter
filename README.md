@@ -408,11 +408,18 @@
     - _reCAPTCHA v2 (invisible) 적용_
       - _[Login]_
       - _[PostTweetForm]_
+- **23-12-09 : Security + React-Hook-Form (4)**
+  - Fix
+    - [PostTweetForm] : 트윗 시 reCaptcha 챌린지 수정
+    - [Tweet] : 글자영역 수정
+      - &lt;p&gt;에 의하여 하위 요소가 flex container 밖으로 나가는 현상
+        - <a href="https://heewon26.tistory.com/298" target="_blank">min-width: 0;</a>
+  - Update
+    - [CreateAccount] : reCaptcha 적용
 
 ---
 
 - To-Do
-  - firebase 콘솔에서 App Check 등록하기 (reCAPTCHA)
   - 트윗에 사용자의 프로필 이미지 추가
   - 이메일, 소셜로그인 통합
   - 개발 완료 시 firebase API 호출 localhost 삭제하기

@@ -107,6 +107,11 @@ export default function PostTweetForm() {
     if (!user || isLoading) return alert("Fail: Please refresh web site.");
     try {
       setIsLoading(true);
+      // Check reCAPTCHA
+      const token = await reCaptchaRef.current?.executeAsync();
+      if (!token)
+        throw setError("reCaptcha", { message: "Fail: reCAPTCHA error." });
+      // Add tweet to DB
       const doc = await addDoc(collection(db, "tweets"), {
         tweet,
         createdAt: Date.now(),

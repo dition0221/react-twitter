@@ -27,14 +27,14 @@ const Wrapper = styled.article`
   border-radius: 15px;
   ${customMedia.small} {
     padding: 10px;
-    gap: 10px;
+    gap: 5px;
     &:last-child {
       margin-bottom: 10px;
     }
   }
   ${customMedia.large} {
     padding: 20px;
-    gap: 20px;
+    gap: 10px;
     &:last-child {
       margin-bottom: 0;
     }
@@ -43,7 +43,7 @@ const Wrapper = styled.article`
 
 const Column = styled.div`
   &:first-child {
-    width: 100%;
+    min-width: 0;
   }
   &:last-child {
     position: relative;
@@ -65,6 +65,7 @@ const Username = styled.span`
 `;
 
 const TweetContent = styled.p`
+  word-wrap: break-word;
   margin: 10px 0;
   font-size: min(5vw, 18px);
 `;
