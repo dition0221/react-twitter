@@ -81,6 +81,7 @@ export default function CreateAccount() {
         setError("firebase", { message: e.message });
       console.log(e);
     } finally {
+      reCaptchaRef.current?.reset(); // Reset reCAPTCHA
       setIsLoading(false);
     }
   };

@@ -3,7 +3,46 @@
 ### Firebase와 Vite를 사용해 Twitter React App을 클론합니다.
 
 <img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white"/> <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=white"/> <img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=white"/> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/> <img src="https://img.shields.io/badge/styled&dash;components-DB7093?style=flat-square&logo=styledcomponents&logoColor=white"/>  
-<img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white"/> <img src="https://img.shields.io/badge/React Router-CA4245?style=flat-square&logo=reactrouter&logoColor=white"/> <img src="https://img.shields.io/badge/timeago.js-000?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/React Hook Form-EC5990?style=flat-square&logo=reacthookform&logoColor=white"/> react-google-recaptcha-v3
+<img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white"/> <img src="https://img.shields.io/badge/React Router-CA4245?style=flat-square&logo=reactrouter&logoColor=white"/> <img src="https://img.shields.io/badge/timeago.js-000?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/React Hook Form-EC5990?style=flat-square&logo=reacthookform&logoColor=white"/> <img src="https://img.shields.io/badge/Google reCAPTCHA-4285F4?style=flat-square&logo=google&logoColor=white"/>
+
+## ![thumbnail](https://github.com/dition0221/dition0221/assets/129196812/50855285-db09-46a7-8a15-efcfda04f6d5)
+
+---
+
+⭐ 결과물 : https://react-twitter-1d1f6.web.app
+
+> ![image](https://github.com/dition0221/dition0221/assets/129196812/cfa6ca74-762c-4765-a005-ddbf52c23d3e)
+>
+> **Firebase의 Auth, DB, Storage**를 이용하여 Back-End없이 기능을 구성한 '**X-Twitter 클론 사이트**'입니다.
+> **반응형 웹 디자인**을 적용해 모바일 기기에서도 원활하게 사용할 수 있습니다.
+> CRA보다 속도가 빠른 **Vite**를 사용했기에, 쾌적한 사용감을 느낄 수 있습니다.
+> Bot으로부터 로렘입숨 DB테러로 인해, **reCAPTCHA** 적용 및 회원가입/로그인 시 특정 이메일주소만 가능하도록 수정하였습니다.
+>
+> - [ Login & Join ]
+> - 홈 화면 및 SNS 기능을 사용하기 위해서는 회원가입 및 로그인이 필요하며, Firebase Auth를 이용해 계정 인증을 합니다.
+>   - 로그인 된 상태에서는 Login, Join 페이지로 접근이 불가합니다.
+> - 소셜 로그인 지원. (GitHub, Google)
+> - 이메일 회원가입 시 react-hook-form의 검증 기능을 통해 네이버 이메일만 가능하도록 하였으며, 발송되는 이메일에 인증을 확인해야 비로소 계정을 사용할 수 있습니다.
+> - 계정의 비밀번호 찾기 시 발송되는 이메일을 통해 비밀번호를 변경할 수 있습니다.
+>
+> ![image](https://github.com/dition0221/dition0221/assets/129196812/f7109aae-e3a7-4a13-b8aa-0800f765941b)
+>
+> - [ Home ]
+> - 트윗을 게시할 수 있으며, 이미지 파일 첨부가 가능합니다.
+> - 트윗을 게시할 시 reCAPTCHA 챌린지가 적용됩니다.
+> - 트윗 리스트는 실시간으로 DB와 연동되어 있어, 즉각적으로 변합니다.
+> - 자신이 게시한 트윗과 이미지는 수정/삭제가 가능합니다.
+>   - 이미지 수정 시 커서를 올리면, 수정/삭제 버튼이 활성화됩니다.
+>
+> ![image](https://github.com/dition0221/dition0221/assets/129196812/c265d361-b414-47f9-87b9-ade7e42b4c5b)
+>
+> - [ Profile ]
+> - 자신의 프로필을 확인할 수 있으며, 아바타 이미자와 닉네임을 변경할 수 있습니다.
+> - 자신이 등록했던 트윗 리스트를 확인할 수 있습니다.
+>
+> ![스크린샷 2023-12-09 154040-1](https://github.com/dition0221/dition0221/assets/129196812/5f00ab52-8045-4f13-a1c5-07d2ff4545e8)
+>
+> '**Rich Link Preview**' 기능을 사용해 카카오톡, 디스코드 등의 플랫폼에서 URL을 공유 시 해당 URL에 대한 풍부한 정보를 제공합니다.
 
 ---
 
@@ -352,30 +391,30 @@
          - 해당 웹사이트에서만 Firebase API를 사용할 수 있도록 설장하는 것
          - localhost도 차단되므로, 개발 중에는 localhost를 추가해도 됨
 - **23-11-15 : Responsive app design(1)**
-  - _Update_
-    - _소셜로그인 구글 추가_
-    - _로그인한 사용자는 '로그인', '회원가입' 페이지에 접근 불가하도록 추가_
-  - _Doing_
-    - _반응형 웹 디자인_
+  - Update
+    - 소셜로그인 구글 추가
+    - 로그인한 사용자는 '로그인', '회원가입' 페이지에 접근 불가하도록 추가
+  - Doing
+    - 반응형 웹 디자인
 - **23-11-16 : Responsive app design(2)**
-  - _Fix : [PostTweetForm] 스토리지에 업로드가 되지 않는 현상 수정_
-    - _firebase 보안룰 문제 : resource.size -> request.resource.size 수정_
-  - _Update_
-    - _반응형 웹 디자인 : 모바일, PC (중단점 : 768px)_
-    - _[Profile] 트윗만 스크롤 가능하도록 업데이트_
-    - _[Timeline, Profile] 트윗 컨테이너의 최상단 이동 anchor 버튼 생성_
-      - _모바일 : 브라우저의 최상단으로 이동_
-      - _PC : 트윗 컨테이너의 최상단으로 이동_
-    - _favicon 업데이트_
-    - _Rich Link Preview 및 썸네일 업데이트_
+  - Fix : [PostTweetForm] 스토리지에 업로드가 되지 않는 현상 수정
+    - firebase 보안룰 문제 : resource.size -> request.resource.size 수정
+  - Update
+    - 반응형 웹 디자인 : 모바일, PC (중단점 : 768px)
+    - [Profile] 트윗만 스크롤 가능하도록 업데이트
+    - [Timeline, Profile] 트윗 컨테이너의 최상단 이동 anchor 버튼 생성
+      - 모바일 : 브라우저의 최상단으로 이동
+      - PC : 트윗 컨테이너의 최상단으로 이동
+    - favicon 업데이트
+    - Rich Link Preview 및 썸네일 업데이트
 - **23-11-17 : 🤣 Hacked by bot**
-  - _Problem : 악성봇에 의해 단시간에 DB할당량을 모두 사용당함_
-  - _Issue_
-    - _이메일 회원가입 시 이메일인증 시스템이 있음에도 불구하고, 가짜이메일은 막지 못한 현상_
-      - _트윗 횟수 제한하기_
-      - _해외 접속 차단하기_
-      - _reCAPTCHA를 사용해 bot 걸러내기_
-      - _이메일 주소 제한하기_
+  - Problem : 악성봇에 의해 단시간에 DB할당량을 모두 사용당함
+  - Issue
+    - 이메일 회원가입 시 이메일인증 시스템이 있음에도 불구하고, 가짜이메일은 막지 못한 현상
+      - 트윗 횟수 제한하기
+      - 해외 접속 차단하기
+      - reCAPTCHA를 사용해 bot 걸러내기
+      - 이메일 주소 제한하기
 - **23-11-21 : Security**
 - **23-12-05 : Security + React-Hook-Form (1)**
   - reCAPTCHA v3
@@ -384,30 +423,30 @@
       - 0~1 사이의 값을 가지며, 0: 봇 / 1: 사람
     - <a href="https://firebase.google.com/docs/app-check/web/recaptcha-provider?hl=ko" target="_blank">시작하기 공식 문서</a>
     - <a href="https://www.npmjs.com/package/react-google-recaptcha-v3" target="_blank">'react-google-recaptcha-v3'</a> 패키지 사용
-  - _Doing_
-    - _~~reCAPTCHA v3 적용~~_
-      - _~~[main], [CreateAccount], [firebase.ts]~~_
-    - _React-Hook-Form 대체 및 검증 조건 생성_
-      - _[CreateAccount], [FindPw]_
-  - _~~Issue~~_
-    - _~~reCAPTCHA v3: Firebase: Error (auth/firebase-app-check-token-is-invalid.).~~_
+  - Doing
+    - ~~reCAPTCHA v3 적용~~
+      - ~~[main], [CreateAccount], [firebase.ts]~~
+    - React-Hook-Form 대체 및 검증 조건 생성
+      - [CreateAccount], [FindPw]
+  - ~~Issue~~
+    - ~~reCAPTCHA v3: Firebase: Error (auth/firebase-app-check-token-is-invalid.).~~
 - **23-12-07 : Security + React-Hook-Form (2)**
   - reCAPTCHA v2 invisible로 대체
     - <a href="https://www.npmjs.com/package/react-google-recaptcha" target="_blank">react-google-recaptcha</a> 패키지 사용
     - <a href="https://www.npmjs.com/package/@types/react-google-recaptcha" target="_blank">@types/react-google-recaptcha</a> 패키지 사용
-  - _Doing_
-    - _React-Hook-Form 대체 및 검증 조건 생성_
+  - Doing
+    - React-Hook-Form 대체 및 검증 조건 생성
       - _[CreateAccount], [FindPw]_
-      - _[login]_
+      - [login]
 - **23-12-08 : Security + React-Hook-Form (3)**
-  - _Update_
-    - _React-Hook-Form 대체 및 검증 조건 생성_
+  - Update
+    - React-Hook-Form 대체 및 검증 조건 생성
       - _[CreateAccount], [FindPw]_
       - _[Login]_
-      - _[PostTweetForm], [Tweet], [Profile]_
-    - _reCAPTCHA v2 (invisible) 적용_
+      - [PostTweetForm], [Tweet], [Profile]
+    - reCAPTCHA v2 (invisible) 적용
       - _[Login]_
-      - _[PostTweetForm]_
+      - [PostTweetForm]
 - **23-12-09 : Security + React-Hook-Form (4)**
   - Fix
     - [PostTweetForm] : 트윗 시 reCaptcha 챌린지 수정
@@ -416,6 +455,7 @@
         - <a href="https://heewon26.tistory.com/298" target="_blank">min-width: 0;</a>
   - Update
     - [CreateAccount] : reCaptcha 적용
+    - [FindPw] : 검증 기능 업데이트
 
 ---
 

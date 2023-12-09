@@ -44,6 +44,7 @@ const Wrapper = styled.article`
 const Column = styled.div`
   &:first-child {
     min-width: 0;
+    width: 100%;
   }
   &:last-child {
     position: relative;

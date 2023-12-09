@@ -72,6 +72,10 @@ export default function FindPw() {
             <Input
               {...register("email", {
                 required: "Fail: Please input your E-mail.",
+                pattern: {
+                  value: /^[A-Za-z0-9._%+-]+@naver\.com$/,
+                  message: "Fail: Only 'naver.com' emails allowed.",
+                },
                 validate: {
                   atSymbol: (v) => v.includes("@") || "Fail: It's not E-mail.",
                 },

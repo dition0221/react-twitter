@@ -132,6 +132,7 @@ export default function PostTweetForm() {
       if (error instanceof FirebaseError)
         setError("firebase", { message: error.message });
     } finally {
+      reCaptchaRef.current?.reset(); // Reset reCAPTCHA
       setIsLoading(false);
     }
   };
